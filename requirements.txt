@@ -1,0 +1,3 @@
+getch
+requests
+email_validator

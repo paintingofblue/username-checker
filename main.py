@@ -5,8 +5,10 @@ import requests
 import random
 import re
 import datetime
+import time
 from getch import getch
-from colr import Colr as C
+from TikTokApi import TikTokApi
+
 
 operatingsys = platform.system()
 if operatingsys == 'Windows':
@@ -14,15 +16,15 @@ if operatingsys == 'Windows':
 elif operatingsys == 'Linux' or 'Darwin':
     clear = 'clear'
 
-wordlist=""
-site=""
-
 HEADERS = {
     "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9",
     "Accept-Encoding": "gzip, deflate, br",
     "Accept-Language": "fr,en-US;q=0.9,en;q=0.8",
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.93 Safari/537.36"
 }
+
+notdone = "This site isn't done.\n\nPress any key to return to the main menu."
+api = TikTokApi()
 
 class style():
     BLACK = '\033[30m'
@@ -40,29 +42,27 @@ def makedirs():
     if os.path.isdir('results'):
         pass
     elif os.path.isdir('results') == False:
-        os.system('mkdir -p results/{Soundcloud,Twitter,WeHeartIt,Instagram,Tiktok,Telegram,Reddit,Twitch,Behance,Solo.to,Linktree,Snapchat,Github,Hotmail,Yahoo,Pastebin,Steam,Tumblr,EpicGames,LastFM,Xbox,Roblox,Minecraft,txti.es,Tellonym}')
-
+        os.system('mkdir -p results/{Behance,EpicGames,Github,Hotmail,Twitch,Krunker,LastFM,Linktree,Minecraft,Pastebin,Reddit,Rentry,Roblox,Snapchat,Solo.to,Soundcloud,Steam,Tellonym,Tiktok,Tumblr,Twitter,WeHeartIt,Xbox,Yahoo,txti.es}')
     if os.path.isdir('wordlists'):
         pass
     elif os.path.isdir('wordlists') == False:
         os.system('mkdir -p wordlists')
 
-    if os.path.isdir('proxies'):
-        pass
-    elif os.path.isdir('proxies') == False:
-        os.system('mkdir -p proxies')
+    #if os.path.isdir('proxies'):
+    #    pass
+    #elif os.path.isdir('proxies') == False:
+    #    os.system('mkdir -p proxies')
 
 def checker(url1, name1):
     global good
     global bad
     global count
-    input1()
-    menu()
     good = 0
     bad = 0
     count = 0
     time1 = str(datetime.datetime.now()).split('.')
-    
+    input1()
+    menu()
     with open('wordlists/' + wordlist1 + '.txt', "r") as a_file:
         for line in a_file:
             global stripped_line
@@ -82,11 +82,17 @@ def checker(url1, name1):
                 print(style.GREEN + "[+] " + style.RESET + " Username available" + "\n")
                 with open("results/" + name1 + "/" + time1[0] + ".txt", "a") as results:
                     results.write("https://" + url1 + f"{stripped_line}" + "\n")
+            time.sleep(interval)
 
 def input1():
     global wordlist1
+    global interval
+    global i
+    i = ""
     menu()
     wordlist1 = str(input("What is the name of the wordlist you want to use?\n"))
+    menu()
+    interval = float(input("What delay do you want to have inbetween checks?\n(This is helpful to avoid ratelimiting & anti-spam measures on some sites.)\n"))
 
 def soundcloud():
     checker("soundcloud.com/", "Soundcloud")
@@ -95,49 +101,62 @@ def soundcloud():
     getch()
 
 def twitter(): # not done
-    checker("tellonym.me/", "Tellonym")
     menu()
-    print("Checked " + str(count) + " users.\n\n" + style.GREEN + str(good) + style.RESET + " available.\n" + style.RED + str(bad) + style.RESET + " unavailable.\n\nPress any key to return to the main menu.")
+    print(notdone)
+    #print("Checked " + str(count) + " users.\n\n" + style.GREEN + str(good) + style.RESET + " available.\n" + style.RED + str(bad) + style.RESET + " unavailable.\n\nPress any key to return to the main menu.")
     getch()
 
-def weheartit(): # not done
-    checker("tellonym.me/", "Tellonym")
-    menu()
-    print("Checked " + str(count) + " users.\n\n" + style.GREEN + str(good) + style.RESET + " available.\n" + style.RED + str(bad) + style.RESET + " unavailable.\n\nPress any key to return to the main menu.")
-    getch()
-
-def instagram(): # not done
-    checker("tellonym.me/", "Tellonym")
+def weheartit():
+    checker("weheartit.com/", "WeHeartIt")
     menu()
     print("Checked " + str(count) + " users.\n\n" + style.GREEN + str(good) + style.RESET + " available.\n" + style.RED + str(bad) + style.RESET + " unavailable.\n\nPress any key to return to the main menu.")
     getch()
 
 def tiktok(): # not done
-    checker("tellonym.me/", "Tellonym")
+    global good
+    global bad
+    global count
+    good = 0
+    bad = 0
+    count = 0
+    time1 = str(datetime.datetime.now()).split('.')
+    input1()
     menu()
-    print("Checked " + str(count) + " users.\n\n" + style.GREEN + str(good) + style.RESET + " available.\n" + style.RED + str(bad) + style.RESET + " unavailable.\n\nPress any key to return to the main menu.")
-    getch()
+    with open('wordlists/' + wordlist1 + '.txt', "r") as a_file:
+        for line in a_file:
+            global stripped_line
+            count = count + 1
+            stripped_line = line.strip()
+            try: #Use a try block since there is a potential of an account not existing
+                user = api.getUserObject(username) #TikTokApi returns a user as an object OR throws a TikTokNotFound exception (I forget the exact name of the exception but you get what I mean)
+                #If the previous line doesn't throw an exception we know the username is taken
+                print(style.RESET + "https://tiktok.com/@" + f"{stripped_line}")
+                print(style.RED + "[-] " + style.RESET + " Username not available" + "\n")
 
-def telegram(): # not done
-    checker("tellonym.me/", "Tellonym")
-    menu()
-    print("Checked " + str(count) + " users.\n\n" + style.GREEN + str(good) + style.RESET + " available.\n" + style.RED + str(bad) + style.RESET + " unavailable.\n\nPress any key to return to the main menu.")
-    getch()
-
-def reddit(): # not done
-    checker("tellonym.me/", "Tellonym")
-    menu()
+            except: #Catches the TikTokNotFound exception. Therefore the username isn't taken.
+                good = good + 1
+                print(style.RESET + "https://tiktok.com/@" + f"{stripped_line}")
+                print(style.GREEN + "[+] " + style.RESET + " Username available" + "\n")
+                with open("results/Tiktok/" + time1[0] + ".txt", "a") as results:
+                    results.write("https://tiktok.com/@" + f"{stripped_line}" + "\n")
+            time.sleep(interval)
     print("Checked " + str(count) + " users.\n\n" + style.GREEN + str(good) + style.RESET + " available.\n" + style.RED + str(bad) + style.RESET + " unavailable.\n\nPress any key to return to the main menu.")
     getch()
 
 def twitch(): # not done
-    checker("tellonym.me/", "Tellonym")
     menu()
-    print("Checked " + str(count) + " users.\n\n" + style.GREEN + str(good) + style.RESET + " available.\n" + style.RED + str(bad) + style.RESET + " unavailable.\n\nPress any key to return to the main menu.")
+    print(notdone)
+    #print("Checked " + str(count) + " users.\n\n" + style.GREEN + str(good) + style.RESET + " available.\n" + style.RED + str(bad) + style.RESET + " unavailable.\n\nPress any key to return to the main menu.")
     getch()
 
-def behance(): # not done
-    checker("tellonym.me/", "Tellonym")
+def reddit(): # not done
+    menu()
+    print(notdone)
+    #print("Checked " + str(count) + " users.\n\n" + style.GREEN + str(good) + style.RESET + " available.\n" + style.RED + str(bad) + style.RESET + " unavailable.\n\nPress any key to return to the main menu.")
+    getch()
+
+def behance():
+    checker("behance.net/", "Behance")
     menu()
     print("Checked " + str(count) + " users.\n\n" + style.GREEN + str(good) + style.RESET + " available.\n" + style.RED + str(bad) + style.RESET + " unavailable.\n\nPress any key to return to the main menu.")
     getch()
@@ -155,9 +174,9 @@ def linktree():
     getch()
 
 def snapchat(): # not done
-    checker("tellonym.me/", "Tellonym")
     menu()
-    print("Checked " + str(count) + " users.\n\n" + style.GREEN + str(good) + style.RESET + " available.\n" + style.RED + str(bad) + style.RESET + " unavailable.\n\nPress any key to return to the main menu.")
+    print(notdone)
+    #print("Checked " + str(count) + " users.\n\n" + style.GREEN + str(good) + style.RESET + " available.\n" + style.RED + str(bad) + style.RESET + " unavailable.\n\nPress any key to return to the main menu.")
     getch()
 
 def github():
@@ -167,61 +186,124 @@ def github():
     getch()
 
 def hotmail(): # not done
-    checker("tellonym.me/", "Tellonym")
     menu()
-    print("Checked " + str(count) + " users.\n\n" + style.GREEN + str(good) + style.RESET + " available.\n" + style.RED + str(bad) + style.RESET + " unavailable.\n\nPress any key to return to the main menu.")
+    print(notdone)
+    #print("Checked " + str(count) + " users.\n\n" + style.GREEN + str(good) + style.RESET + " available.\n" + style.RED + str(bad) + style.RESET + " unavailable.\n\nPress any key to return to the main menu.")
     getch()
 
 def yahoo(): # not done
-    checker("tellonym.me/", "Tellonym")
     menu()
-    print("Checked " + str(count) + " users.\n\n" + style.GREEN + str(good) + style.RESET + " available.\n" + style.RED + str(bad) + style.RESET + " unavailable.\n\nPress any key to return to the main menu.")
+    print(notdone)
+    #print("Checked " + str(count) + " users.\n\n" + style.GREEN + str(good) + style.RESET + " available.\n" + style.RED + str(bad) + style.RESET + " unavailable.\n\nPress any key to return to the main menu.")
     getch()
 
-def pastebin(): # not done
-    checker("tellonym.me/", "Tellonym")
+def pastebin():
+    checker("pastebin.com/u/", "Pastebin")
     menu()
     print("Checked " + str(count) + " users.\n\n" + style.GREEN + str(good) + style.RESET + " available.\n" + style.RED + str(bad) + style.RESET + " unavailable.\n\nPress any key to return to the main menu.")
     getch()
 
 def steam(): # not done
-    checker("tellonym.me/", "Tellonym")
     menu()
-    print("Checked " + str(count) + " users.\n\n" + style.GREEN + str(good) + style.RESET + " available.\n" + style.RED + str(bad) + style.RESET + " unavailable.\n\nPress any key to return to the main menu.")
+    print(notdone)
+    #print("Checked " + str(count) + " users.\n\n" + style.GREEN + str(good) + style.RESET + " available.\n" + style.RED + str(bad) + style.RESET + " unavailable.\n\nPress any key to return to the main menu.")
     getch()
 
-def tumblr(): # not done
-    checker("tellonym.me/", "Tellonym")
+def tumblr():
+    input1()
     menu()
+    good = 0
+    bad = 0
+    count = 0
+    time1 = str(datetime.datetime.now()).split('.')
+    
+    with open('wordlists/' + wordlist1 + '.txt', "r") as a_file:
+        for line in a_file:
+            global stripped_line
+            count = count + 1
+            stripped_line = line.strip()
+            sess = requests.Session()
+            req = sess.get("https://" + f"{stripped_line}" + ".tumblr.com", headers=HEADERS)
+
+            if req.status_code == 200:
+                bad = bad + 1
+                print(style.RESET + "https://" + f"{stripped_line}" + ".tumblr.com")
+                print(style.RED + "[-] " + style.RESET + " Username not available" + "\n")
+
+            elif req.status_code == 404:
+                good = good + 1
+                print(style.RESET + "https://" + f"{stripped_line}" + ".tumblr.com")
+                print(style.GREEN + "[+] " + style.RESET + " Username available" + "\n")
+                with open("results/Tumblr/" + time1[0] + ".txt", "a") as results:
+                    results.write("https://" + f"{stripped_line}" + ".tumblr.com\n")
+            time.sleep(interval)
     print("Checked " + str(count) + " users.\n\n" + style.GREEN + str(good) + style.RESET + " available.\n" + style.RED + str(bad) + style.RESET + " unavailable.\n\nPress any key to return to the main menu.")
     getch()
 
 def epicgames(): # not done
-    checker("tellonym.me/", "Tellonym")
     menu()
-    print("Checked " + str(count) + " users.\n\n" + style.GREEN + str(good) + style.RESET + " available.\n" + style.RED + str(bad) + style.RESET + " unavailable.\n\nPress any key to return to the main menu.")
+    print(notdone)
+    #print("Checked " + str(count) + " users.\n\n" + style.GREEN + str(good) + style.RESET + " available.\n" + style.RED + str(bad) + style.RESET + " unavailable.\n\nPress any key to return to the main menu.")
     getch()
 
 def lastfm(): # not done
-    checker("tellonym.me/", "Tellonym")
     menu()
-    print("Checked " + str(count) + " users.\n\n" + style.GREEN + str(good) + style.RESET + " available.\n" + style.RED + str(bad) + style.RESET + " unavailable.\n\nPress any key to return to the main menu.")
+    print(notdone)
+    #print("Checked " + str(count) + " users.\n\n" + style.GREEN + str(good) + style.RESET + " available.\n" + style.RED + str(bad) + style.RESET + " unavailable.\n\nPress any key to return to the main menu.")
     getch()
 
 def xbox(): # not done
-    checker("tellonym.me/", "Tellonym")
     menu()
-    print("Checked " + str(count) + " users.\n\n" + style.GREEN + str(good) + style.RESET + " available.\n" + style.RED + str(bad) + style.RESET + " unavailable.\n\nPress any key to return to the main menu.")
+    print(notdone)
+    #print("Checked " + str(count) + " users.\n\n" + style.GREEN + str(good) + style.RESET + " available.\n" + style.RED + str(bad) + style.RESET + " unavailable.\n\nPress any key to return to the main menu.")
     getch()
 
 def roblox(): # not done
-    checker("tellonym.me/", "Tellonym")
     menu()
-    print("Checked " + str(count) + " users.\n\n" + style.GREEN + str(good) + style.RESET + " available.\n" + style.RED + str(bad) + style.RESET + " unavailable.\n\nPress any key to return to the main menu.")
+    print(notdone)
+    #print("Checked " + str(count) + " users.\n\n" + style.GREEN + str(good) + style.RESET + " available.\n" + style.RED + str(bad) + style.RESET + " unavailable.\n\nPress any key to return to the main menu.")
     getch()
 
 def minecraft(): # not done
-    checker("tellonym.me/", "Tellonym")
+    global i
+    good = 0
+    bad = 0
+    count = 0
+    time1 = str(datetime.datetime.now()).split('.')
+    i = ""
+    if os.path.isdir('results/Minecraft/Available-Later') and os.path.isdir('results/Minecraft/Available'):
+        pass
+    elif os.path.isdir('results/Minecraft/Available Later') == False and os.path.isdir('results/Minecraft/Available') == False:
+        os.system('mkdir -p results/Minecraft/Available-Later')
+        os.system('mkdir -p results/Minecraft/Available')
+    input1()
+    menu()
+    with open('wordlists/' + wordlist1 + '.txt', "r") as a_file:
+        for line in a_file:
+            global stripped_line
+            count = count + 1
+            stripped_line = line.strip()
+            url = f'https://faav-namemc-api.herokuapp.com/status/{stripped_line}'
+            r = requests.get(url)
+            if r.json()['success'] == True and r.json()['status'] == "unavailable":
+                bad = bad + 1
+                print(style.RESET + stripped_line)
+                print(style.RED + "[-] " + style.RESET + " Username not available" + "\n")
+
+            elif r.json()['success'] == True:
+                if r.json()['status'] == 'available':
+                    good = good + 1
+                    print(style.RESET + stripped_line)
+                    print(style.GREEN + "[+] " + style.RESET + " Username available" + "\n")
+                    with open("results/Minecraft/Available/" + time1[0] + ".txt", "a") as results:
+                        results.write(stripped_line + "\n")
+                elif r.json()['status'] == 'available_later':
+                    good = good + 1
+                    print(style.RESET + stripped_line)
+                    print(style.GREEN + "[+] " + style.RESET + " Username available" + "\n")
+                    with open("results/Minecraft/Available-Later/" + time1[0] + ".txt", "a") as results:
+                        results.write(stripped_line + " - Available on " + str(datetime.datetime.fromtimestamp(r.json()['unix'] / 1000)) + "\n")
+            time.sleep(interval)   
     menu()
     print("Checked " + str(count) + " users.\n\n" + style.GREEN + str(good) + style.RESET + " available.\n" + style.RED + str(bad) + style.RESET + " unavailable.\n\nPress any key to return to the main menu.")
     getch()
@@ -238,14 +320,42 @@ def tellonym():
     print("Checked " + str(count) + " users.\n\n" + style.GREEN + str(good) + style.RESET + " available.\n" + style.RED + str(bad) + style.RESET + " unavailable.\n\nPress any key to return to the main menu.")
     getch()
 
-def krunker(): # not done
-    checker("tellonym.me/", "Tellonym")
+def krunker():
+    global i
+    good = 0
+    bad = 0
+    count = 0
+    time1 = str(datetime.datetime.now()).split('.')
+    i = ""
+    input1()
+    menu()
+    with open('wordlists/' + wordlist1 + '.txt', "r") as a_file:
+        for line in a_file:
+            global stripped_line
+            count = count + 1
+            stripped_line = line.strip()
+            url = f'https://kr.vercel.app/api/profile?username={stripped_line}&raw=false'
+            url1 = "krunker.io/social.html?p=profile&q="
+            r = requests.get(url)
+            if r.text == "Internal Server Error" or len(stripped_line) <= 2:
+                bad = bad + 1
+                print(style.RESET + "https://" + url1 + f"{stripped_line}")
+                print(style.RED + "[-] " + style.RESET + " Username not available" + "\n")
+
+            elif r.json()['success'] == False:
+                if r.json()['error'] == 'Player not found':
+                    good = good + 1
+                    print(style.RESET + "https://" + url1 + f"{stripped_line}")
+                    print(style.GREEN + "[+] " + style.RESET + " Username available" + "\n")
+                    with open("results/Krunker/" + time1[0] + ".txt", "a") as results:
+                        results.write("https://" + url1 + f"{stripped_line}" + "\n")
+            
     menu()
     print("Checked " + str(count) + " users.\n\n" + style.GREEN + str(good) + style.RESET + " available.\n" + style.RED + str(bad) + style.RESET + " unavailable.\n\nPress any key to return to the main menu.")
     getch()
 
-def rentry(): # not done
-    checker("tellonym.me/", "Tellonym")
+def rentry():
+    checker("rentry.co/", "Rentry")
     menu()
     print("Checked " + str(count) + " users.\n\n" + style.GREEN + str(good) + style.RESET + " available.\n" + style.RED + str(bad) + style.RESET + " unavailable.\n\nPress any key to return to the main menu.")
     getch()
@@ -258,7 +368,7 @@ def main():
         i = "                                                          page 1/4"
         menu()
         try:
-            choice=int(input("Choose an option:\n(1) Soundcloud\n(2) Twitter\n(3) WeHeartIt\n(4) Instagram\n(5) Tiktok\n(6) Telegram\n(7) Reddit\n(8) Twitch\n(9) Go to the next page\n(10) Quit\nChoice: "))
+            choice=int(input("Choose an option:\n(1) Soundcloud\n(2) Twitter - not done\n(3) WeHeartIt\n(4) Rentry\n(5) Tiktok - not done\n(6) Tellonym\n(7) Reddit - not done\n(8) Twitch - not done\n(9) Go to the next page\n(10) Quit\nChoice: "))
             if choice==1:
                 soundcloud()
                 continue
@@ -267,11 +377,11 @@ def main():
             elif choice==3:
                 weheartit()
             elif choice==4:
-                instagram()
+                rentry()
             elif choice==5:
                 tiktok()
             elif choice==6:
-                telegram()
+                tellonym()
             elif choice==7:
                 reddit()
             elif choice==8:
@@ -299,7 +409,7 @@ def main2():
         i = "                                                          page 2/4"
         menu()
         try:
-            choice=int(input("Choose an option:\n(1) Behance\n(2) Solo.to\n(3) Linktree\n(4) Snapchat\n(5) Github\n(6) Hotmail\n(7) Yahoo\n(8) Pastebin\n(9) Go to the next page\n(10) Go to the previous page\nChoice: "))
+            choice=int(input("Choose an option:\n(1) Behance\n(2) Solo.to\n(3) Linktree\n(4) Snapchat - not done\n(5) Github\n(6) Hotmail - not done\n(7) Yahoo - not done\n(8) Pastebin\n(9) Go to the next page\n(10) Go to the previous page\nChoice: "))
             if choice==1:
                 behance()
             elif choice==2:
@@ -340,7 +450,7 @@ def main3():
         i = "                                                          page 3/4"
         menu()
         try:
-            choice=int(input("Choose an option:\n(1) Steam\n(2) Tumblr\n(3) Epic Games\n(4) LastFM\n(5) Xbox\n(6) Roblox\n(7) Minecraft\n(8) txti.es\n(9) Go to the next page\n(10) Go to the previous page\nChoice: "))
+            choice=int(input("Choose an option:\n(1) Steam - not done\n(2) Tumblr\n(3) Epic Games - not done\n(4) LastFM - not done\n(5) Xbox - not done\n(6) Roblox - not done\n(7) Minecraft\n(8) txti.es\n(9) Go to the next page\n(10) Go to the previous page\nChoice: "))
             if choice==1:
                 steam()
             elif choice==2:
@@ -380,14 +490,10 @@ def main4():
         i = "                                                          page 4/4"
         menu()
         try:
-            choice=int(input("Choose an option:\n(1) Krunker\n(2) Rentry\n(3) Tellonym\n(4) Go to the previous page\nChoice: "))
+            choice=int(input("Choose an option:\n(1) Krunker\n(2) Go to the previous page\nChoice: "))
             if choice==1:
                 krunker()
             elif choice==2:
-                rentry()
-            elif choice==3:
-                tellonym()
-            elif choice==4:
                 main3()
                 break
             else:
