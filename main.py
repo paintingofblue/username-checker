@@ -1,9 +1,6 @@
 import os
 import platform
-import sys
 import requests
-import random
-import re
 import datetime
 import time
 
@@ -39,19 +36,18 @@ class style():
     RESET = '\033[0m'
 
 def makedirs():
+    sites = "Behance EpicGames Github Hotmail Twitch Krunker LastFM Linktree Minecraft Pastebin Reddit Rentry Roblox Snapchat Solo.to Soundcloud Steam Tellonym Tiktok Tumblr Twitter WeHeartIt Xbox Yahoo txti.es".split()
     if os.path.isdir('results'):
         pass
     elif os.path.isdir('results') == False:
-        os.system('mkdir -p results/{Behance,EpicGames,Github,Hotmail,Twitch,Krunker,LastFM,Linktree,Minecraft,Pastebin,Reddit,Rentry,Roblox,Snapchat,Solo.to,Soundcloud,Steam,Tellonym,Tiktok,Tumblr,Twitter,WeHeartIt,Xbox,Yahoo,txti.es}')
+        os.system("mkdir results")
+        for items in sites:
+            path = os.path.join("results/", items)
+            os.mkdir(path)
     if os.path.isdir('wordlists'):
         pass
     elif os.path.isdir('wordlists') == False:
-        os.system('mkdir -p wordlists')
-
-    #if os.path.isdir('proxies'):
-    #    pass
-    #elif os.path.isdir('proxies') == False:
-    #    os.system('mkdir -p proxies')
+        os.system('mkdir wordlists')
 
 def checker(url1, name1):
     global good
@@ -60,7 +56,7 @@ def checker(url1, name1):
     good = 0
     bad = 0
     count = 0
-    time1 = str(datetime.datetime.now()).split('.')
+    time1 = str(datetime.datetime.now()).split('.')[0].replace(":", "-")
     input1()
     menu()
     with open('wordlists/' + wordlist1 + '.txt', "r") as a_file:
@@ -80,7 +76,7 @@ def checker(url1, name1):
                 good = good + 1
                 print(style.RESET + "https://" + url1 + f"{stripped_line}")
                 print(style.GREEN + "[+] " + style.RESET + " Username available" + "\n")
-                with open("results/" + name1 + "/" + time1[0] + ".txt", "a") as results:
+                with open("results/" + name1 + "/" + time1 + ".txt", "a") as results:
                     results.write("https://" + url1 + f"{stripped_line}" + "\n")
             time.sleep(interval)
 
@@ -190,7 +186,7 @@ def tumblr():
     good = 0
     bad = 0
     count = 0
-    time1 = str(datetime.datetime.now()).split('.')
+    time1 = str(datetime.datetime.now()).split('.')[0].replace(":", "-")
     
     with open('wordlists/' + wordlist1 + '.txt', "r") as a_file:
         for line in a_file:
@@ -209,7 +205,7 @@ def tumblr():
                 good = good + 1
                 print(style.RESET + "https://" + f"{stripped_line}" + ".tumblr.com")
                 print(style.GREEN + "[+] " + style.RESET + " Username available" + "\n")
-                with open("results/Tumblr/" + time1[0] + ".txt", "a") as results:
+                with open("results/Tumblr/" + time1 + ".txt", "a") as results:
                     results.write("https://" + f"{stripped_line}" + ".tumblr.com\n")
             time.sleep(interval)
     print("Checked " + str(count) + " users.\n\n" + style.GREEN + str(good) + style.RESET + " available.\n" + style.RED + str(bad) + style.RESET + " unavailable.\n\nPress any key to return to the main menu.")
@@ -244,15 +240,18 @@ def minecraft(): # not done
     good = 0
     bad = 0
     count = 0
-    time1 = str(datetime.datetime.now()).split('.')
+    time1 = str(datetime.datetime.now()).split('.')[0].replace(":", "-")
     i = ""
-    if os.path.isdir('results/Minecraft/Available-Later') and os.path.isdir('results/Minecraft/Available'):
-        pass
-    elif os.path.isdir('results/Minecraft/Available Later') == False and os.path.isdir('results/Minecraft/Available') == False:
-        os.system('mkdir -p results/Minecraft/Available-Later')
-        os.system('mkdir -p results/Minecraft/Available')
     input1()
     menu()
+    makedirs()
+    minecraft = 'Available-Later Available'.split()
+    if os.path.isdir('results/Minecraft/Available-Later') and os.path.isdir('results/Minecraft/Available'):
+        pass
+    elif os.path.isdir('results/Minecraft/Available-Later') == False and os.path.isdir('results/Minecraft/Available') == False:
+        for items in minecraft:
+            path = os.path.join("results/Minecraft/", items)
+            os.mkdir(path)
     with open('wordlists/' + wordlist1 + '.txt', "r") as a_file:
         for line in a_file:
             global stripped_line
@@ -270,13 +269,13 @@ def minecraft(): # not done
                     good = good + 1
                     print(style.RESET + stripped_line)
                     print(style.GREEN + "[+] " + style.RESET + " Username available" + "\n")
-                    with open("results/Minecraft/Available/" + time1[0] + ".txt", "a") as results:
+                    with open("results/Minecraft/Available/" + time1 + ".txt", "a") as results:
                         results.write(stripped_line + "\n")
                 elif r.json()['status'] == 'available_later':
                     good = good + 1
                     print(style.RESET + stripped_line)
-                    print(style.GREEN + "[+] " + style.RESET + " Username available" + "\n")
-                    with open("results/Minecraft/Available-Later/" + time1[0] + ".txt", "a") as results:
+                    print(style.GREEN + "[+] " + style.RESET + " Username available soon" + "\n")
+                    with open("results/Minecraft/Available-Later/" + time1 + ".txt", "a") as results:
                         results.write(stripped_line + " - Available on " + str(datetime.datetime.fromtimestamp(r.json()['unix'] / 1000)) + "\n")
             time.sleep(interval)   
     menu()
@@ -300,7 +299,7 @@ def krunker():
     good = 0
     bad = 0
     count = 0
-    time1 = str(datetime.datetime.now()).split('.')
+    time1 = str(datetime.datetime.now()).split('.')[0].replace(":", "-")
     i = ""
     input1()
     menu()
@@ -322,7 +321,7 @@ def krunker():
                     good = good + 1
                     print(style.RESET + "https://" + url1 + f"{stripped_line}")
                     print(style.GREEN + "[+] " + style.RESET + " Username available" + "\n")
-                    with open("results/Krunker/" + time1[0] + ".txt", "a") as results:
+                    with open("results/Krunker/" + time1 + ".txt", "a") as results:
                         results.write("https://" + url1 + f"{stripped_line}" + "\n")
             
     menu()
