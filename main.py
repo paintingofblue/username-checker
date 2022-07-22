@@ -6,15 +6,16 @@ import random
 import re
 import datetime
 import time
-from getch import getch
-from TikTokApi import TikTokApi
-
 
 operatingsys = platform.system()
 if operatingsys == 'Windows':
+    import msvcrt
     clear = 'cls'
+    getch1 = 'msvcrt.getch()'
 elif operatingsys == 'Linux' or 'Darwin':
+    from getch import getch
     clear = 'clear'
+    getch1 = 'getch()'
 
 HEADERS = {
     "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9",
@@ -24,7 +25,6 @@ HEADERS = {
 }
 
 notdone = "This site isn't done.\n\nPress any key to return to the main menu."
-api = TikTokApi()
 
 class style():
     BLACK = '\033[30m'
@@ -98,116 +98,91 @@ def soundcloud():
     checker("soundcloud.com/", "Soundcloud")
     menu()
     print("Checked " + str(count) + " users.\n\n" + style.GREEN + str(good) + style.RESET + " available.\n" + style.RED + str(bad) + style.RESET + " unavailable.\n\nPress any key to return to the main menu.")
-    getch()
+    exec(getch1)
 
 def twitter(): # not done
     menu()
     print(notdone)
     #print("Checked " + str(count) + " users.\n\n" + style.GREEN + str(good) + style.RESET + " available.\n" + style.RED + str(bad) + style.RESET + " unavailable.\n\nPress any key to return to the main menu.")
-    getch()
+    exec(getch1)
 
 def weheartit():
     checker("weheartit.com/", "WeHeartIt")
     menu()
     print("Checked " + str(count) + " users.\n\n" + style.GREEN + str(good) + style.RESET + " available.\n" + style.RED + str(bad) + style.RESET + " unavailable.\n\nPress any key to return to the main menu.")
-    getch()
+    exec(getch1)
 
 def tiktok(): # not done
-    global good
-    global bad
-    global count
-    good = 0
-    bad = 0
-    count = 0
-    time1 = str(datetime.datetime.now()).split('.')
-    input1()
     menu()
-    with open('wordlists/' + wordlist1 + '.txt', "r") as a_file:
-        for line in a_file:
-            global stripped_line
-            count = count + 1
-            stripped_line = line.strip()
-            try: #Use a try block since there is a potential of an account not existing
-                user = api.getUserObject(username) #TikTokApi returns a user as an object OR throws a TikTokNotFound exception (I forget the exact name of the exception but you get what I mean)
-                #If the previous line doesn't throw an exception we know the username is taken
-                print(style.RESET + "https://tiktok.com/@" + f"{stripped_line}")
-                print(style.RED + "[-] " + style.RESET + " Username not available" + "\n")
-
-            except: #Catches the TikTokNotFound exception. Therefore the username isn't taken.
-                good = good + 1
-                print(style.RESET + "https://tiktok.com/@" + f"{stripped_line}")
-                print(style.GREEN + "[+] " + style.RESET + " Username available" + "\n")
-                with open("results/Tiktok/" + time1[0] + ".txt", "a") as results:
-                    results.write("https://tiktok.com/@" + f"{stripped_line}" + "\n")
-            time.sleep(interval)
-    print("Checked " + str(count) + " users.\n\n" + style.GREEN + str(good) + style.RESET + " available.\n" + style.RED + str(bad) + style.RESET + " unavailable.\n\nPress any key to return to the main menu.")
-    getch()
+    print(notdone)
+    #print("Checked " + str(count) + " users.\n\n" + style.GREEN + str(good) + style.RESET + " available.\n" + style.RED + str(bad) + style.RESET + " unavailable.\n\nPress any key to return to the main menu.")
+    exec(getch1)
 
 def twitch(): # not done
     menu()
     print(notdone)
     #print("Checked " + str(count) + " users.\n\n" + style.GREEN + str(good) + style.RESET + " available.\n" + style.RED + str(bad) + style.RESET + " unavailable.\n\nPress any key to return to the main menu.")
-    getch()
+    exec(getch1)
 
 def reddit(): # not done
     menu()
     print(notdone)
     #print("Checked " + str(count) + " users.\n\n" + style.GREEN + str(good) + style.RESET + " available.\n" + style.RED + str(bad) + style.RESET + " unavailable.\n\nPress any key to return to the main menu.")
-    getch()
+    exec(getch1)
 
 def behance():
     checker("behance.net/", "Behance")
     menu()
     print("Checked " + str(count) + " users.\n\n" + style.GREEN + str(good) + style.RESET + " available.\n" + style.RED + str(bad) + style.RESET + " unavailable.\n\nPress any key to return to the main menu.")
-    getch()
+    exec(getch1)
 
 def soloto(): 
     checker("solo.to/", "Solo.to")
     menu()
     print("Checked " + str(count) + " users.\n\n" + style.GREEN + str(good) + style.RESET + " available.\n" + style.RED + str(bad) + style.RESET + " unavailable.\n\nPress any key to return to the main menu.")
-    getch()
+    exec(getch1)
 
 def linktree():
     checker("linktr.ee/", "Linktree")
     menu()
     print("Checked " + str(count) + " users.\n\n" + style.GREEN + str(good) + style.RESET + " available.\n" + style.RED + str(bad) + style.RESET + " unavailable.\n\nPress any key to return to the main menu.")
-    getch()
+    exec(getch1)
 
 def snapchat(): # not done
     menu()
     print(notdone)
     #print("Checked " + str(count) + " users.\n\n" + style.GREEN + str(good) + style.RESET + " available.\n" + style.RED + str(bad) + style.RESET + " unavailable.\n\nPress any key to return to the main menu.")
-    getch()
+    exec(getch1)
 
 def github():
     checker("github.com/", "Github")
     menu()
     print("Checked " + str(count) + " users.\n\n" + style.GREEN + str(good) + style.RESET + " available.\n" + style.RED + str(bad) + style.RESET + " unavailable.\n\nPress any key to return to the main menu.")
-    getch()
+    exec(getch1)
 
 def hotmail(): # not done
     menu()
     print(notdone)
     #print("Checked " + str(count) + " users.\n\n" + style.GREEN + str(good) + style.RESET + " available.\n" + style.RED + str(bad) + style.RESET + " unavailable.\n\nPress any key to return to the main menu.")
-    getch()
+    exec(getch1)
 
 def yahoo(): # not done
     menu()
     print(notdone)
     #print("Checked " + str(count) + " users.\n\n" + style.GREEN + str(good) + style.RESET + " available.\n" + style.RED + str(bad) + style.RESET + " unavailable.\n\nPress any key to return to the main menu.")
-    getch()
+    exec(getch1)
 
 def pastebin():
     checker("pastebin.com/u/", "Pastebin")
     menu()
     print("Checked " + str(count) + " users.\n\n" + style.GREEN + str(good) + style.RESET + " available.\n" + style.RED + str(bad) + style.RESET + " unavailable.\n\nPress any key to return to the main menu.")
-    getch()
+    exec(getch1)
 
 def steam(): # not done
     menu()
     print(notdone)
     #print("Checked " + str(count) + " users.\n\n" + style.GREEN + str(good) + style.RESET + " available.\n" + style.RED + str(bad) + style.RESET + " unavailable.\n\nPress any key to return to the main menu.")
-    getch()
+    exec(getch1)
 
 def tumblr():
     input1()
@@ -238,31 +213,31 @@ def tumblr():
                     results.write("https://" + f"{stripped_line}" + ".tumblr.com\n")
             time.sleep(interval)
     print("Checked " + str(count) + " users.\n\n" + style.GREEN + str(good) + style.RESET + " available.\n" + style.RED + str(bad) + style.RESET + " unavailable.\n\nPress any key to return to the main menu.")
-    getch()
+    exec(getch1)
 
 def epicgames(): # not done
     menu()
     print(notdone)
     #print("Checked " + str(count) + " users.\n\n" + style.GREEN + str(good) + style.RESET + " available.\n" + style.RED + str(bad) + style.RESET + " unavailable.\n\nPress any key to return to the main menu.")
-    getch()
+    exec(getch1)
 
 def lastfm(): # not done
     menu()
     print(notdone)
     #print("Checked " + str(count) + " users.\n\n" + style.GREEN + str(good) + style.RESET + " available.\n" + style.RED + str(bad) + style.RESET + " unavailable.\n\nPress any key to return to the main menu.")
-    getch()
+    exec(getch1)
 
 def xbox(): # not done
     menu()
     print(notdone)
     #print("Checked " + str(count) + " users.\n\n" + style.GREEN + str(good) + style.RESET + " available.\n" + style.RED + str(bad) + style.RESET + " unavailable.\n\nPress any key to return to the main menu.")
-    getch()
+    exec(getch1)
 
 def roblox(): # not done
     menu()
     print(notdone)
     #print("Checked " + str(count) + " users.\n\n" + style.GREEN + str(good) + style.RESET + " available.\n" + style.RED + str(bad) + style.RESET + " unavailable.\n\nPress any key to return to the main menu.")
-    getch()
+    exec(getch1)
 
 def minecraft(): # not done
     global i
@@ -306,19 +281,19 @@ def minecraft(): # not done
             time.sleep(interval)   
     menu()
     print("Checked " + str(count) + " users.\n\n" + style.GREEN + str(good) + style.RESET + " available.\n" + style.RED + str(bad) + style.RESET + " unavailable.\n\nPress any key to return to the main menu.")
-    getch()
+    exec(getch1)
 
 def txties():
     checker("txti.es/", "txti.es")
     menu()
     print("Checked " + str(count) + " users.\n\n" + style.GREEN + str(good) + style.RESET + " available.\n" + style.RED + str(bad) + style.RESET + " unavailable.\n\nPress any key to return to the main menu.")
-    getch()
+    exec(getch1)
 
 def tellonym():
     checker("tellonym.me/", "Tellonym")
     menu()
     print("Checked " + str(count) + " users.\n\n" + style.GREEN + str(good) + style.RESET + " available.\n" + style.RED + str(bad) + style.RESET + " unavailable.\n\nPress any key to return to the main menu.")
-    getch()
+    exec(getch1)
 
 def krunker():
     global i
@@ -352,13 +327,13 @@ def krunker():
             
     menu()
     print("Checked " + str(count) + " users.\n\n" + style.GREEN + str(good) + style.RESET + " available.\n" + style.RED + str(bad) + style.RESET + " unavailable.\n\nPress any key to return to the main menu.")
-    getch()
+    exec(getch1)
 
 def rentry():
     checker("rentry.co/", "Rentry")
     menu()
     print("Checked " + str(count) + " users.\n\n" + style.GREEN + str(good) + style.RESET + " available.\n" + style.RED + str(bad) + style.RESET + " unavailable.\n\nPress any key to return to the main menu.")
-    getch()
+    exec(getch1)
 
 def main():
     while True:
@@ -394,11 +369,11 @@ def main():
                 break
             else:
                 print("That was an incorrect answer. Press any key to continue")
-                getch()
+                exec(getch1)
                 continue
         except:
             print("That was an incorrect answer. Press any key to continue")
-            getch()
+            exec(getch1)
             continue
 
 def main2():
@@ -435,11 +410,11 @@ def main2():
                 break
             else:
                 print("That was an incorrect answer. Press any key to continue")
-                getch()
+                exec(getch1)
                 continue
         except:
             print("That was an incorrect answer. Press any key to continue")
-            getch()
+            exec(getch1)
             continue
 
 def main3():
@@ -475,11 +450,11 @@ def main3():
                 break
             else:
                 print("That was an incorrect answer. Press any key to continue")
-                getch()
+                exec(getch1)
                 continue
         except:
             print("That was an incorrect answer. Press any key to continue")
-            getch()
+            exec(getch1)
             continue
 
 def main4():
@@ -498,11 +473,11 @@ def main4():
                 break
             else:
                 print("That was an incorrect answer. Press any key to continue")
-                getch()
+                exec(getch1)
                 continue
         except:
             print("That was an incorrect answer. Press any key to continue")
-            getch()
+            exec(getch1)
             continue
 
 def menu():
