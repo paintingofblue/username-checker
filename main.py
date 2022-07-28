@@ -10,7 +10,7 @@ if operatingsys == 'Windows':
     clear = 'cls'
     getch1 = 'msvcrt.getch()'
 elif operatingsys == 'Linux' or 'Darwin':
-    from getch import getch
+    from getch import getch # type:ignore
     clear = 'clear'
     getch1 = 'getch()'
 
@@ -97,9 +97,40 @@ def soundcloud():
     exec(getch1)
 
 def twitter(): # not done
+    global good
+    global bad
+    global count
+    global i
+    i = ''
+    good = 0
+    bad = 0
+    count = 0
     menu()
-    print(notdone)
-    #print("Checked " + str(count) + " users.\n\n" + style.GREEN + str(good) + style.RESET + " available.\n" + style.RED + str(bad) + style.RESET + " unavailable.\n\nPress any key to return to the main menu.")
+    time1 = str(datetime.datetime.now()).split('.')[0].replace(":", "-")
+    input1()
+    menu()
+    with open('wordlists/' + wordlist1 + '.txt', "r") as a_file:
+        for line in a_file:
+            global stripped_line
+            count = count + 1
+            stripped_line = line.strip()
+            sess = requests.Session()
+            req = sess.get(f"https://nitter.it/{stripped_line}", headers=HEADERS)
+
+            if req.status_code == 200:
+                bad = bad + 1
+                print(style.RESET + f"https://twitter.com/{stripped_line}")
+                print(style.RED + "[-] " + style.RESET + " Username not available" + "\n")
+
+            elif req.status_code == 404:
+                good = good + 1
+                print(style.RESET + "https://twitter.com"f"{stripped_line}")
+                print(style.GREEN + "[+] " + style.RESET + " Username available" + "\n")
+                with open("results/Twitter/" + time1 + ".txt", "a") as results:
+                    results.write("https://twitter.com"f"{stripped_line}" + "\n")
+            time.sleep(interval)
+    menu()
+    print("Checked " + str(count) + " users.\n\n" + style.GREEN + str(good) + style.RESET + " available.\n" + style.RED + str(bad) + style.RESET + " unavailable.\n\nPress any key to return to the main menu.")
     exec(getch1)
 
 def weheartit():
@@ -342,7 +373,7 @@ def main():
         i = "                                                          page 1/4"
         menu()
         try:
-            choice=int(input("Choose an option:\n(1) Soundcloud\n(2) Twitter - not done\n(3) WeHeartIt\n(4) Rentry\n(5) Tiktok - not done\n(6) Tellonym\n(7) Reddit - not done\n(8) Twitch - not done\n(9) Go to the next page\n(10) Quit\nChoice: "))
+            choice=int(input("Choose an option:\n(1) Soundcloud\n(2) Twitter\n(3) WeHeartIt\n(4) Rentry\n(5) Tiktok - not done\n(6) Tellonym\n(7) Reddit - not done\n(8) Twitch - not done\n(9) Go to the next page\n(10) Quit\nChoice: "))
             if choice==1:
                 soundcloud()
                 continue
