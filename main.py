@@ -9,10 +9,12 @@ if operatingsys == 'Windows':
     import msvcrt
     clear = 'cls'
     getch1 = 'msvcrt.getch()'
+    mainfunc = 'main()'
 elif operatingsys == 'Linux' or 'Darwin':
     from getch import getch # type:ignore
     clear = 'clear'
     getch1 = 'getch()'
+    mainfunc = 'main()'
 
 HEADERS = {
     "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9",
@@ -81,289 +83,407 @@ def checker(url1, name1):
             time.sleep(interval)
 
 def input1():
-    global wordlist1
-    global interval
-    global i
-    i = ""
-    menu()
-    wordlist1 = str(input("What is the name of the wordlist you want to use?\n"))
-    menu()
-    interval = float(input("What delay do you want to have inbetween checks?\n(This is helpful to avoid ratelimiting & anti-spam measures on some sites.)\n"))
+    while True:
+        global wordlist1
+        global interval
+        global i
+        i = ""
+        menu()
+        wordlist1 = str(input("What is the name of the wordlist you want to use?\n(Note that the program automatically appends .txt to your input.)\n"))
+        try:
+            open('wordlists/' + wordlist1 + '.txt', "r")
+            pass
+        except:
+            menu()
+            print("The file you entered either doesn't exist or was incorrectly entered.\nPlease try again.\n\nPress any key to continue.")
+            exec(getch1)
+            exec(mainfunc)
+            break
+        menu()
+        interval = float(input("What delay do you want to have inbetween checks?\n(This is helpful to avoid ratelimiting & anti-spam measures on some sites.)\n"))
+        break
 
 def soundcloud():
-    checker("soundcloud.com/", "Soundcloud")
-    menu()
-    print("Checked " + str(count) + " users.\n\n" + style.GREEN + str(good) + style.RESET + " available.\n" + style.RED + str(bad) + style.RESET + " unavailable.\n\nPress any key to return to the main menu.")
-    exec(getch1)
+    while True:
+        checker("soundcloud.com/", "Soundcloud")
+        menu()
+        print("Checked " + str(count) + " users.\n\n" + style.GREEN + str(good) + style.RESET + " available.\n" + style.RED + str(bad) + style.RESET + " unavailable.\n\nPress any key to return to the main menu.")
+        exec(getch1)
+        exec(mainfunc)
+        break
 
 def twitter(): # not done
-    global good
-    global bad
-    global count
-    global i
-    i = ''
-    good = 0
-    bad = 0
-    count = 0
-    menu()
-    time1 = str(datetime.datetime.now()).split('.')[0].replace(":", "-")
-    input1()
-    menu()
-    with open('wordlists/' + wordlist1 + '.txt', "r") as a_file:
-        for line in a_file:
-            global stripped_line
-            count = count + 1
-            stripped_line = line.strip()
-            sess = requests.Session()
-            req = sess.get(f"https://nitter.it/{stripped_line}", headers=HEADERS)
+    while True:
+        global good
+        global bad
+        global count
+        global i
+        i = ''
+        good = 0
+        bad = 0
+        count = 0
+        menu()
+        time1 = str(datetime.datetime.now()).split('.')[0].replace(":", "-")
+        input1()
+        menu()
+        with open('wordlists/' + wordlist1 + '.txt', "r") as a_file:
+            for line in a_file:
+                global stripped_line
+                count = count + 1
+                stripped_line = line.strip()
+                sess = requests.Session()
+                req = sess.get(f"https://nitter.it/{stripped_line}", headers=HEADERS)
 
-            if req.status_code == 200:
-                bad = bad + 1
-                print(style.RESET + f"https://twitter.com/{stripped_line}")
-                print(style.RED + "[-] " + style.RESET + " Username not available" + "\n")
+                if req.status_code == 200:
+                    bad = bad + 1
+                    print(style.RESET + f"https://twitter.com/{stripped_line}")
+                    print(style.RED + "[-] " + style.RESET + " Username not available" + "\n")
 
-            elif req.status_code == 404:
-                good = good + 1
-                print(style.RESET + "https://twitter.com"f"{stripped_line}")
-                print(style.GREEN + "[+] " + style.RESET + " Username available" + "\n")
-                with open("results/Twitter/" + time1 + ".txt", "a") as results:
-                    results.write("https://twitter.com"f"{stripped_line}" + "\n")
-            time.sleep(interval)
-    menu()
-    print("Checked " + str(count) + " users.\n\n" + style.GREEN + str(good) + style.RESET + " available.\n" + style.RED + str(bad) + style.RESET + " unavailable.\n\nPress any key to return to the main menu.")
-    exec(getch1)
+                elif req.status_code == 404:
+                    good = good + 1
+                    print(style.RESET + "https://twitter.com"f"{stripped_line}")
+                    print(style.GREEN + "[+] " + style.RESET + " Username available" + "\n")
+                    with open("results/Twitter/" + time1 + ".txt", "a") as results:
+                        results.write("https://twitter.com"f"{stripped_line}" + "\n")
+                time.sleep(interval)
+        menu()
+        print("Checked " + str(count) + " users.\n\n" + style.GREEN + str(good) + style.RESET + " available.\n" + style.RED + str(bad) + style.RESET + " unavailable.\n\nPress any key to return to the main menu.")
+        exec(getch1)
+        exec(mainfunc)
+        break
+    
 
 def weheartit():
-    checker("weheartit.com/", "WeHeartIt")
-    menu()
-    print("Checked " + str(count) + " users.\n\n" + style.GREEN + str(good) + style.RESET + " available.\n" + style.RED + str(bad) + style.RESET + " unavailable.\n\nPress any key to return to the main menu.")
-    exec(getch1)
+    while True:
+        checker("weheartit.com/", "WeHeartIt")
+        menu()
+        print("Checked " + str(count) + " users.\n\n" + style.GREEN + str(good) + style.RESET + " available.\n" + style.RED + str(bad) + style.RESET + " unavailable.\n\nPress any key to return to the main menu.")
+        exec(getch1)
+        exec(mainfunc)
+        break
 
 def tiktok(): # not done
-    menu()
-    print(notdone)
-    #print("Checked " + str(count) + " users.\n\n" + style.GREEN + str(good) + style.RESET + " available.\n" + style.RED + str(bad) + style.RESET + " unavailable.\n\nPress any key to return to the main menu.")
-    exec(getch1)
+    while True:
+        menu()
+        print(notdone)
+        #print("Checked " + str(count) + " users.\n\n" + style.GREEN + str(good) + style.RESET + " available.\n" + style.RED + str(bad) + style.RESET + " unavailable.\n\nPress any key to return to the main menu.")
+        exec(getch1)
+        exec(mainfunc)
+        break
 
 def twitch(): # not done
-    menu()
-    print(notdone)
-    #print("Checked " + str(count) + " users.\n\n" + style.GREEN + str(good) + style.RESET + " available.\n" + style.RED + str(bad) + style.RESET + " unavailable.\n\nPress any key to return to the main menu.")
-    exec(getch1)
+    while True:
+        menu()
+        print(notdone)
+        #print("Checked " + str(count) + " users.\n\n" + style.GREEN + str(good) + style.RESET + " available.\n" + style.RED + str(bad) + style.RESET + " unavailable.\n\nPress any key to return to the main menu.")
+        exec(getch1)
+        exec(mainfunc)
+        break
 
 def reddit(): # not done
-    menu()
-    print(notdone)
-    #print("Checked " + str(count) + " users.\n\n" + style.GREEN + str(good) + style.RESET + " available.\n" + style.RED + str(bad) + style.RESET + " unavailable.\n\nPress any key to return to the main menu.")
-    exec(getch1)
+    while True:
+        global good
+        global bad
+        global count
+        global i
+        i = ''
+        good = 0
+        bad = 0
+        count = 0
+        menu()
+        time1 = str(datetime.datetime.now()).split('.')[0].replace(":", "-")
+        input1()
+        menu()
+        with open('wordlists/' + wordlist1 + '.txt', "r") as a_file:
+            for line in a_file:
+                global stripped_line
+                count = count + 1
+                stripped_line = line.strip()
+                sess = requests.Session()
+                req = sess.get(f"https://www.troddit.com/u/{stripped_line}", headers=HEADERS)
+
+                if req.status_code == 200:
+                    bad = bad + 1
+                    print(style.RESET + f"https://www.reddit.com/u/{stripped_line}")
+                    print(style.RED + "[-] " + style.RESET + " Username not available" + "\n")
+
+                elif req.status_code == 404:
+                    good = good + 1
+                    print(style.RESET + "https://www.reddit.com/u/"f"{stripped_line}")
+                    print(style.GREEN + "[+] " + style.RESET + " Username available" + "\n")
+                    with open("results/Reddit/" + time1 + ".txt", "a") as results:
+                        results.write("https://www.reddit.com/u/"f"{stripped_line}" + "\n")
+                time.sleep(interval)
+        menu()
+        print("Checked " + str(count) + " users.\n\n" + style.GREEN + str(good) + style.RESET + " available.\n" + style.RED + str(bad) + style.RESET + " unavailable.\n\nPress any key to return to the main menu.")
+        exec(getch1)
+        exec(mainfunc)
+        break
 
 def behance():
-    checker("behance.net/", "Behance")
-    menu()
-    print("Checked " + str(count) + " users.\n\n" + style.GREEN + str(good) + style.RESET + " available.\n" + style.RED + str(bad) + style.RESET + " unavailable.\n\nPress any key to return to the main menu.")
-    exec(getch1)
+    while True:
+        checker("behance.net/", "Behance")
+        menu()
+        print("Checked " + str(count) + " users.\n\n" + style.GREEN + str(good) + style.RESET + " available.\n" + style.RED + str(bad) + style.RESET + " unavailable.\n\nPress any key to return to the main menu.")
+        exec(getch1)
+        exec(mainfunc)
+        break
 
 def soloto(): 
-    checker("solo.to/", "Solo.to")
-    menu()
-    print("Checked " + str(count) + " users.\n\n" + style.GREEN + str(good) + style.RESET + " available.\n" + style.RED + str(bad) + style.RESET + " unavailable.\n\nPress any key to return to the main menu.")
-    exec(getch1)
+    while True:
+        checker("solo.to/", "Solo.to")
+        menu()
+        print("Checked " + str(count) + " users.\n\n" + style.GREEN + str(good) + style.RESET + " available.\n" + style.RED + str(bad) + style.RESET + " unavailable.\n\nPress any key to return to the main menu.")
+        exec(getch1)
+        exec(mainfunc)
+        break
 
 def linktree():
-    checker("linktr.ee/", "Linktree")
-    menu()
-    print("Checked " + str(count) + " users.\n\n" + style.GREEN + str(good) + style.RESET + " available.\n" + style.RED + str(bad) + style.RESET + " unavailable.\n\nPress any key to return to the main menu.")
-    exec(getch1)
+    while True:
+        checker("linktr.ee/", "Linktree")
+        menu()
+        print("Checked " + str(count) + " users.\n\n" + style.GREEN + str(good) + style.RESET + " available.\n" + style.RED + str(bad) + style.RESET + " unavailable.\n\nPress any key to return to the main menu.")
+        exec(getch1)
+        exec(mainfunc)
+        break
 
 def snapchat(): # not done
-    menu()
-    print(notdone)
-    #print("Checked " + str(count) + " users.\n\n" + style.GREEN + str(good) + style.RESET + " available.\n" + style.RED + str(bad) + style.RESET + " unavailable.\n\nPress any key to return to the main menu.")
-    exec(getch1)
+    while True:
+        menu()
+        print(notdone)
+        #print("Checked " + str(count) + " users.\n\n" + style.GREEN + str(good) + style.RESET + " available.\n" + style.RED + str(bad) + style.RESET + " unavailable.\n\nPress any key to return to the main menu.")
+        exec(getch1)
+        exec(mainfunc)
+        break
 
 def github():
-    checker("github.com/", "Github")
-    menu()
-    print("Checked " + str(count) + " users.\n\n" + style.GREEN + str(good) + style.RESET + " available.\n" + style.RED + str(bad) + style.RESET + " unavailable.\n\nPress any key to return to the main menu.")
-    exec(getch1)
+    while True:
+        checker("github.com/", "Github")
+        menu()
+        print("Checked " + str(count) + " users.\n\n" + style.GREEN + str(good) + style.RESET + " available.\n" + style.RED + str(bad) + style.RESET + " unavailable.\n\nPress any key to return to the main menu.")
+        exec(getch1)
+        exec(mainfunc)
+        break
 
 def hotmail(): # not done
-    menu()
-    print(notdone)
-    #print("Checked " + str(count) + " users.\n\n" + style.GREEN + str(good) + style.RESET + " available.\n" + style.RED + str(bad) + style.RESET + " unavailable.\n\nPress any key to return to the main menu.")
-    exec(getch1)
+    while True:
+        menu()
+        print(notdone)
+        #print("Checked " + str(count) + " users.\n\n" + style.GREEN + str(good) + style.RESET + " available.\n" + style.RED + str(bad) + style.RESET + " unavailable.\n\nPress any key to return to the main menu.")
+        exec(getch1)
+        exec(mainfunc)
+        break
 
 def yahoo(): # not done
-    menu()
-    print(notdone)
-    #print("Checked " + str(count) + " users.\n\n" + style.GREEN + str(good) + style.RESET + " available.\n" + style.RED + str(bad) + style.RESET + " unavailable.\n\nPress any key to return to the main menu.")
-    exec(getch1)
+    while True:
+        menu()
+        print(notdone)
+        #print("Checked " + str(count) + " users.\n\n" + style.GREEN + str(good) + style.RESET + " available.\n" + style.RED + str(bad) + style.RESET + " unavailable.\n\nPress any key to return to the main menu.")
+        exec(getch1)
+        exec(mainfunc)
+        break
 
 def pastebin():
-    checker("pastebin.com/u/", "Pastebin")
-    menu()
-    print("Checked " + str(count) + " users.\n\n" + style.GREEN + str(good) + style.RESET + " available.\n" + style.RED + str(bad) + style.RESET + " unavailable.\n\nPress any key to return to the main menu.")
-    exec(getch1)
+    while True:
+        checker("pastebin.com/u/", "Pastebin")
+        menu()
+        print("Checked " + str(count) + " users.\n\n" + style.GREEN + str(good) + style.RESET + " available.\n" + style.RED + str(bad) + style.RESET + " unavailable.\n\nPress any key to return to the main menu.")
+        exec(getch1)
+        exec(mainfunc)
+        break
 
 def steam(): # not done
-    menu()
-    print(notdone)
-    #print("Checked " + str(count) + " users.\n\n" + style.GREEN + str(good) + style.RESET + " available.\n" + style.RED + str(bad) + style.RESET + " unavailable.\n\nPress any key to return to the main menu.")
-    exec(getch1)
+    while True:
+        menu()
+        print(notdone)
+        #print("Checked " + str(count) + " users.\n\n" + style.GREEN + str(good) + style.RESET + " available.\n" + style.RED + str(bad) + style.RESET + " unavailable.\n\nPress any key to return to the main menu.")
+        exec(getch1)
+        exec(mainfunc)
+        break
 
 def tumblr():
-    input1()
-    menu()
-    good = 0
-    bad = 0
-    count = 0
-    time1 = str(datetime.datetime.now()).split('.')[0].replace(":", "-")
-    
-    with open('wordlists/' + wordlist1 + '.txt', "r") as a_file:
-        for line in a_file:
-            global stripped_line
-            count = count + 1
-            stripped_line = line.strip()
-            sess = requests.Session()
-            req = sess.get("https://" + f"{stripped_line}" + ".tumblr.com", headers=HEADERS)
+    while True:
+        input1()
+        menu()
+        good = 0
+        bad = 0
+        count = 0
+        time1 = str(datetime.datetime.now()).split('.')[0].replace(":", "-")
+        
+        with open('wordlists/' + wordlist1 + '.txt', "r") as a_file:
+            for line in a_file:
+                global stripped_line
+                count = count + 1
+                stripped_line = line.strip()
+                sess = requests.Session()
+                req = sess.get("https://" + f"{stripped_line}" + ".tumblr.com", headers=HEADERS)
 
-            if req.status_code == 200:
-                bad = bad + 1
-                print(style.RESET + "https://" + f"{stripped_line}" + ".tumblr.com")
-                print(style.RED + "[-] " + style.RESET + " Username not available" + "\n")
+                if req.status_code == 200:
+                    bad = bad + 1
+                    print(style.RESET + "https://" + f"{stripped_line}" + ".tumblr.com")
+                    print(style.RED + "[-] " + style.RESET + " Username not available" + "\n")
 
-            elif req.status_code == 404:
-                good = good + 1
-                print(style.RESET + "https://" + f"{stripped_line}" + ".tumblr.com")
-                print(style.GREEN + "[+] " + style.RESET + " Username available" + "\n")
-                with open("results/Tumblr/" + time1 + ".txt", "a") as results:
-                    results.write("https://" + f"{stripped_line}" + ".tumblr.com\n")
-            time.sleep(interval)
-    print("Checked " + str(count) + " users.\n\n" + style.GREEN + str(good) + style.RESET + " available.\n" + style.RED + str(bad) + style.RESET + " unavailable.\n\nPress any key to return to the main menu.")
-    exec(getch1)
+                elif req.status_code == 404:
+                    good = good + 1
+                    print(style.RESET + "https://" + f"{stripped_line}" + ".tumblr.com")
+                    print(style.GREEN + "[+] " + style.RESET + " Username available" + "\n")
+                    with open("results/Tumblr/" + time1 + ".txt", "a") as results:
+                        results.write("https://" + f"{stripped_line}" + ".tumblr.com\n")
+                time.sleep(interval)
+        print("Checked " + str(count) + " users.\n\n" + style.GREEN + str(good) + style.RESET + " available.\n" + style.RED + str(bad) + style.RESET + " unavailable.\n\nPress any key to return to the main menu.")
+        exec(getch1)
+        exec(mainfunc)
+        break
 
 def epicgames(): # not done
-    menu()
-    print(notdone)
-    #print("Checked " + str(count) + " users.\n\n" + style.GREEN + str(good) + style.RESET + " available.\n" + style.RED + str(bad) + style.RESET + " unavailable.\n\nPress any key to return to the main menu.")
-    exec(getch1)
+    while True:
+        menu()
+        print(notdone)
+        #print("Checked " + str(count) + " users.\n\n" + style.GREEN + str(good) + style.RESET + " available.\n" + style.RED + str(bad) + style.RESET + " unavailable.\n\nPress any key to return to the main menu.")
+        exec(getch1)
+        exec(mainfunc)
+        break
 
 def lastfm(): # not done
-    menu()
-    print(notdone)
-    #print("Checked " + str(count) + " users.\n\n" + style.GREEN + str(good) + style.RESET + " available.\n" + style.RED + str(bad) + style.RESET + " unavailable.\n\nPress any key to return to the main menu.")
-    exec(getch1)
+    while True:
+        menu()
+        print(notdone)
+        #print("Checked " + str(count) + " users.\n\n" + style.GREEN + str(good) + style.RESET + " available.\n" + style.RED + str(bad) + style.RESET + " unavailable.\n\nPress any key to return to the main menu.")
+        exec(getch1)
+        exec(mainfunc)
+        break
 
 def xbox(): # not done
-    menu()
-    print(notdone)
-    #print("Checked " + str(count) + " users.\n\n" + style.GREEN + str(good) + style.RESET + " available.\n" + style.RED + str(bad) + style.RESET + " unavailable.\n\nPress any key to return to the main menu.")
-    exec(getch1)
+    while True:
+        menu()
+        print(notdone)
+        #print("Checked " + str(count) + " users.\n\n" + style.GREEN + str(good) + style.RESET + " available.\n" + style.RED + str(bad) + style.RESET + " unavailable.\n\nPress any key to return to the main menu.")
+        exec(getch1)
+        exec(mainfunc)
+        break
 
 def roblox(): # not done
-    menu()
-    print(notdone)
-    #print("Checked " + str(count) + " users.\n\n" + style.GREEN + str(good) + style.RESET + " available.\n" + style.RED + str(bad) + style.RESET + " unavailable.\n\nPress any key to return to the main menu.")
-    exec(getch1)
+    while True:
+        menu()
+        print(notdone)
+        #print("Checked " + str(count) + " users.\n\n" + style.GREEN + str(good) + style.RESET + " available.\n" + style.RED + str(bad) + style.RESET + " unavailable.\n\nPress any key to return to the main menu.")
+        exec(getch1)
+        exec(mainfunc)
+        break
 
 def minecraft(): # not done
-    global i
-    good = 0
-    bad = 0
-    count = 0
-    time1 = str(datetime.datetime.now()).split('.')[0].replace(":", "-")
-    i = ""
-    input1()
-    menu()
-    makedirs()
-    minecraft = 'Available-Later Available'.split()
-    if os.path.isdir('results/Minecraft/Available-Later') and os.path.isdir('results/Minecraft/Available'):
-        pass
-    elif os.path.isdir('results/Minecraft/Available-Later') == False and os.path.isdir('results/Minecraft/Available') == False:
-        for items in minecraft:
-            path = os.path.join("results/Minecraft/", items)
-            os.mkdir(path)
-    with open('wordlists/' + wordlist1 + '.txt', "r") as a_file:
-        for line in a_file:
-            global stripped_line
-            count = count + 1
-            stripped_line = line.strip()
-            url = f'https://faav-namemc-api.herokuapp.com/status/{stripped_line}'
-            r = requests.get(url)
-            if r.json()['success'] == True and r.json()['status'] == "unavailable":
-                bad = bad + 1
-                print(style.RESET + stripped_line)
-                print(style.RED + "[-] " + style.RESET + " Username not available" + "\n")
+    while True:
+        global i
+        good = 0
+        bad = 0
+        count = 0
+        time1 = str(datetime.datetime.now()).split('.')[0].replace(":", "-")
+        i = ""
+        input1()
+        menu()
+        makedirs()
+        minecraft = 'Available-Later Available'.split()
+        if os.path.isdir('results/Minecraft/Available-Later') and os.path.isdir('results/Minecraft/Available'):
+            pass
+        elif os.path.isdir('results/Minecraft/Available-Later') == False and os.path.isdir('results/Minecraft/Available') == False:
+            for items in minecraft:
+                path = os.path.join("results/Minecraft/", items)
+                os.mkdir(path)
+        with open('wordlists/' + wordlist1 + '.txt', "r") as a_file:
+            for line in a_file:
+                global stripped_line
+                count = count + 1
+                stripped_line = line.strip()
+                url = f'https://faav-namemc-api.herokuapp.com/status/{stripped_line}'
+                r = requests.get(url)
+                if r.json()['success'] == True and r.json()['status'] == "unavailable":
+                    bad = bad + 1
+                    print(style.RESET + stripped_line)
+                    print(style.RED + "[-] " + style.RESET + " Username not available" + "\n")
 
-            elif r.json()['success'] == True:
-                if r.json()['status'] == 'available':
-                    good = good + 1
-                    print(style.RESET + stripped_line)
-                    print(style.GREEN + "[+] " + style.RESET + " Username available" + "\n")
-                    with open("results/Minecraft/Available/" + time1 + ".txt", "a") as results:
-                        results.write(stripped_line + "\n")
-                elif r.json()['status'] == 'available_later':
-                    good = good + 1
-                    print(style.RESET + stripped_line)
-                    print(style.GREEN + "[+] " + style.RESET + " Username available soon" + "\n")
-                    with open("results/Minecraft/Available-Later/" + time1 + ".txt", "a") as results:
-                        results.write(stripped_line + " - Available on " + str(datetime.datetime.fromtimestamp(r.json()['unix'] / 1000)) + "\n")
-            time.sleep(interval)   
-    menu()
-    print("Checked " + str(count) + " users.\n\n" + style.GREEN + str(good) + style.RESET + " available.\n" + style.RED + str(bad) + style.RESET + " unavailable.\n\nPress any key to return to the main menu.")
-    exec(getch1)
+                elif r.json()['success'] == True:
+                    if r.json()['status'] == 'available':
+                        good = good + 1
+                        print(style.RESET + stripped_line)
+                        print(style.GREEN + "[+] " + style.RESET + " Username available" + "\n")
+                        with open("results/Minecraft/Available/" + time1 + ".txt", "a") as results:
+                            results.write(stripped_line + "\n")
+                    elif r.json()['status'] == 'available_later':
+                        good = good + 1
+                        print(style.RESET + stripped_line)
+                        print(style.GREEN + "[+] " + style.RESET + " Username available soon" + "\n")
+                        with open("results/Minecraft/Available-Later/" + time1 + ".txt", "a") as results:
+                            results.write(stripped_line + " - Available on " + str(datetime.datetime.fromtimestamp(r.json()['unix'] / 1000)) + "\n")
+                time.sleep(interval)   
+        menu()
+        print("Checked " + str(count) + " users.\n\n" + style.GREEN + str(good) + style.RESET + " available.\n" + style.RED + str(bad) + style.RESET + " unavailable.\n\nPress any key to return to the main menu.")
+        exec(getch1)
+        exec(mainfunc)
+        break
 
 def txties():
-    checker("txti.es/", "txti.es")
-    menu()
-    print("Checked " + str(count) + " users.\n\n" + style.GREEN + str(good) + style.RESET + " available.\n" + style.RED + str(bad) + style.RESET + " unavailable.\n\nPress any key to return to the main menu.")
-    exec(getch1)
+    while True:
+        checker("txti.es/", "txti.es")
+        menu()
+        print("Checked " + str(count) + " users.\n\n" + style.GREEN + str(good) + style.RESET + " available.\n" + style.RED + str(bad) + style.RESET + " unavailable.\n\nPress any key to return to the main menu.")
+        exec(getch1)
+        exec(mainfunc)
+        break
 
 def tellonym():
-    checker("tellonym.me/", "Tellonym")
-    menu()
-    print("Checked " + str(count) + " users.\n\n" + style.GREEN + str(good) + style.RESET + " available.\n" + style.RED + str(bad) + style.RESET + " unavailable.\n\nPress any key to return to the main menu.")
-    exec(getch1)
+    while True:
+        checker("tellonym.me/", "Tellonym")
+        menu()
+        print("Checked " + str(count) + " users.\n\n" + style.GREEN + str(good) + style.RESET + " available.\n" + style.RED + str(bad) + style.RESET + " unavailable.\n\nPress any key to return to the main menu.")
+        exec(getch1)
+        exec(mainfunc)
+        break
 
 def krunker():
-    global i
-    good = 0
-    bad = 0
-    count = 0
-    time1 = str(datetime.datetime.now()).split('.')[0].replace(":", "-")
-    i = ""
-    input1()
-    menu()
-    with open('wordlists/' + wordlist1 + '.txt', "r") as a_file:
-        for line in a_file:
-            global stripped_line
-            count = count + 1
-            stripped_line = line.strip()
-            url = f'https://kr.vercel.app/api/profile?username={stripped_line}&raw=false'
-            url1 = "krunker.io/social.html?p=profile&q="
-            r = requests.get(url)
-            if r.text == "Internal Server Error" or len(stripped_line) <= 2:
-                bad = bad + 1
-                print(style.RESET + "https://" + url1 + f"{stripped_line}")
-                print(style.RED + "[-] " + style.RESET + " Username not available" + "\n")
-
-            elif r.json()['success'] == False:
-                if r.json()['error'] == 'Player not found':
-                    good = good + 1
+    while True:
+        global i
+        good = 0
+        bad = 0
+        count = 0
+        time1 = str(datetime.datetime.now()).split('.')[0].replace(":", "-")
+        i = ""
+        input1()
+        menu()
+        with open('wordlists/' + wordlist1 + '.txt', "r") as a_file:
+            for line in a_file:
+                global stripped_line
+                count = count + 1
+                stripped_line = line.strip()
+                url = f'https://kr.vercel.app/api/profile?username={stripped_line}&raw=false'
+                url1 = "krunker.io/social.html?p=profile&q="
+                r = requests.get(url)
+                if r.text == "Internal Server Error" or len(stripped_line) <= 2:
+                    bad = bad + 1
                     print(style.RESET + "https://" + url1 + f"{stripped_line}")
-                    print(style.GREEN + "[+] " + style.RESET + " Username available" + "\n")
-                    with open("results/Krunker/" + time1 + ".txt", "a") as results:
-                        results.write("https://" + url1 + f"{stripped_line}" + "\n")
-            
-    menu()
-    print("Checked " + str(count) + " users.\n\n" + style.GREEN + str(good) + style.RESET + " available.\n" + style.RED + str(bad) + style.RESET + " unavailable.\n\nPress any key to return to the main menu.")
-    exec(getch1)
+                    print(style.RED + "[-] " + style.RESET + " Username not available" + "\n")
+
+                elif r.json()['success'] == False:
+                    if r.json()['error'] == 'Player not found':
+                        good = good + 1
+                        print(style.RESET + "https://" + url1 + f"{stripped_line}")
+                        print(style.GREEN + "[+] " + style.RESET + " Username available" + "\n")
+                        with open("results/Krunker/" + time1 + ".txt", "a") as results:
+                            results.write("https://" + url1 + f"{stripped_line}" + "\n")
+                
+        menu()
+        print("Checked " + str(count) + " users.\n\n" + style.GREEN + str(good) + style.RESET + " available.\n" + style.RED + str(bad) + style.RESET + " unavailable.\n\nPress any key to return to the main menu.")
+        exec(getch1)
+        exec(mainfunc)
+        break
 
 def rentry():
-    checker("rentry.co/", "Rentry")
-    menu()
-    print("Checked " + str(count) + " users.\n\n" + style.GREEN + str(good) + style.RESET + " available.\n" + style.RED + str(bad) + style.RESET + " unavailable.\n\nPress any key to return to the main menu.")
-    exec(getch1)
+    while True:
+        checker("rentry.co/", "Rentry")
+        menu()
+        print("Checked " + str(count) + " users.\n\n" + style.GREEN + str(good) + style.RESET + " available.\n" + style.RED + str(bad) + style.RESET + " unavailable.\n\nPress any key to return to the main menu.")
+        exec(getch1)
+        exec(mainfunc)
+        break
 
 def main():
     while True:
@@ -376,21 +496,28 @@ def main():
             choice=int(input("Choose an option:\n(1) Soundcloud\n(2) Twitter\n(3) WeHeartIt\n(4) Rentry\n(5) Tiktok - not done\n(6) Tellonym\n(7) Reddit - not done\n(8) Twitch - not done\n(9) Go to the next page\n(10) Quit\nChoice: "))
             if choice==1:
                 soundcloud()
-                continue
+                break
             elif choice==2:
                 twitter()
+                break
             elif choice==3:
                 weheartit()
+                break
             elif choice==4:
                 rentry()
+                break
             elif choice==5:
                 tiktok()
+                break
             elif choice==6:
                 tellonym()
+                break
             elif choice==7:
                 reddit()
+                break
             elif choice==8:
                 twitch()
+                break
             elif choice==9:
                 main2()
                 break
@@ -414,23 +541,31 @@ def main2():
         i = "                                                          page 2/4"
         menu()
         try:
-            choice=int(input("Choose an option:\n(1) Behance\n(2) Solo.to\n(3) Linktree\n(4) Snapchat - not done\n(5) Github\n(6) Hotmail - not done\n(7) Yahoo - not done\n(8) Pastebin\n(9) Go to the next page\n(10) Go to the previous page\nChoice: "))
+            choice=int(input("Choose an option:\n(1) Behance\n(2) Solo.to\n(3) Linktree\n(4) Snapchat - not done\n(5) Github\n(6) Hotmail/Outlook - checks all TLDS\n(7) Yahoo - checks all TLDS\n(8) Pastebin\n(9) Go to the next page\n(10) Go to the previous page\nChoice: "))
             if choice==1:
                 behance()
+                break
             elif choice==2:
                 soloto()
+                break
             elif choice==3:
                 linktree()
+                break
             elif choice==4:
                 snapchat()
+                break
             elif choice==5:
                 github()
+                break
             elif choice==6:
                 hotmail()
+                break
             elif choice==7:
                 yahoo()
+                break
             elif choice==8:
                 pastebin()
+                break
             elif choice==9:
                 main3()
                 break
@@ -458,20 +593,28 @@ def main3():
             choice=int(input("Choose an option:\n(1) Steam - not done\n(2) Tumblr\n(3) Epic Games - not done\n(4) LastFM - not done\n(5) Xbox - not done\n(6) Roblox - not done\n(7) Minecraft\n(8) txti.es\n(9) Go to the next page\n(10) Go to the previous page\nChoice: "))
             if choice==1:
                 steam()
+                break
             elif choice==2:
                 tumblr()
+                break
             elif choice==3:
                 epicgames()
+                break
             elif choice==4:
                 lastfm()
+                break
             elif choice==5:
                 xbox()
+                break
             elif choice==6:
                 roblox()
+                break
             elif choice==7:
                 minecraft()
+                break
             elif choice==8:
                 txties()
+                break
             elif choice==9:
                 main4()
                 break
@@ -498,6 +641,7 @@ def main4():
             choice=int(input("Choose an option:\n(1) Krunker\n(2) Go to the previous page\nChoice: "))
             if choice==1:
                 krunker()
+                break
             elif choice==2:
                 main3()
                 break
