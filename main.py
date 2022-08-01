@@ -3,8 +3,7 @@ import platform
 import requests
 import datetime
 import time
-import json
-from validate_email import validate_email
+
 
 operatingsys = platform.system()
 if operatingsys == 'Windows':
@@ -356,7 +355,7 @@ def steam():
                     good = good + 1
                     print(style.RESET + "https://steamcommunity.com/id/"f"{stripped_line}")
                     print(style.GREEN + "[+] " + style.RESET + " Username available" + "\n")
-                    with open("results/Reddit/" + time1 + ".txt", "a") as results:
+                    with open("results/Steam/" + time1 + ".txt", "a") as results:
                         results.write("https://steamcommunity.com/id/"f"{stripped_line}" + "\n")
                 time.sleep(interval)
         menu()
@@ -557,7 +556,7 @@ def krunker():
         exec(getch1)
         exec(mainfunc)
         break
-
+ 
 def rentry():
     while True:
         checker("rentry.co/", "Rentry")
@@ -572,7 +571,7 @@ def main():
         makedirs()
         os.system(clear)
         global i
-        i = "                                                          page 1/4"
+        i = "                                                          page 1/3"
         menu()
         try:
             choice=int(input("Choose an option:\n(1) Soundcloud\n(2) Twitter\n(3) WeHeartIt\n(4) Rentry\n(5) Tiktok - not done\n(6) Tellonym\n(7) Reddit\n(8) Twitch\n(9) Go to the next page\n(10) Quit\nChoice: "))
@@ -620,7 +619,7 @@ def main2():
         makedirs()
         os.system(clear)
         global i
-        i = "                                                          page 2/4"
+        i = "                                                          page 2/3"
         menu()
         try:
             choice=int(input("Choose an option:\n(1) Behance\n(2) Solo.to\n(3) Linktree\n(4) Snapchat - not done\n(5) Github\n(6) Hotmail/Outlook - checks all TLDS, not done\n(7) Yahoo - checks all TLDS, not done\n(8) Pastebin\n(9) Go to the next page\n(10) Go to the previous page\nChoice: "))
@@ -669,10 +668,10 @@ def main3():
         makedirs()
         os.system(clear)
         global i
-        i = "                                                          page 3/4"
+        i = "                                                          page 3/3"
         menu()
         try:
-            choice=int(input("Choose an option:\n(1) Steam\n(2) Tumblr\n(3) Epic Games - not done\n(4) LastFM\n(5) Xbox\n(6) Krunker\n(7) Minecraft\n(8) txti.es\n(9) Go to the next page\n(10) Go to the previous page\nChoice: "))
+            choice=int(input("Choose an option:\n(1) Steam\n(2) Tumblr\n(3) Epic Games - not done\n(4) LastFM\n(5) Xbox\n(6) Krunker\n(7) Minecraft\n(8) txti.es\n(9) Go to the previous page\nChoice: "))
             if choice==1:
                 steam()
                 break
@@ -698,37 +697,7 @@ def main3():
                 txties()
                 break
             elif choice==9:
-                main4()
-                break
-            elif choice==10:
                 main2()
-                break
-            else:
-                print("That was an incorrect answer. Press any key to continue")
-                exec(getch1)
-                continue
-        except:
-            print("That was an incorrect answer. Press any key to continue")
-            exec(getch1)
-            continue
-
-def main4():
-    while True:
-        makedirs()
-        os.system(clear)
-        global i
-        i = "                                                          page 4/4"
-        menu()
-        try:
-            choice=int(input("Choose an option:\n(1) Placeholder\n(2) Go to the previous page\nChoice: "))
-            if choice==1:
-                menu()
-                print(notdone)
-                exec(getch1)
-                main()
-                break
-            elif choice==2:
-                main3()
                 break
             else:
                 print("That was an incorrect answer. Press any key to continue")
