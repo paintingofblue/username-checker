@@ -3,6 +3,8 @@ import platform
 import requests
 import datetime
 import time
+import json
+from validate_email import validate_email
 
 operatingsys = platform.system()
 if operatingsys == 'Windows':
@@ -38,7 +40,7 @@ class style():
     RESET = '\033[0m'
 
 def makedirs():
-    sites = "Behance EpicGames Github Hotmail Twitch Krunker LastFM Linktree Minecraft Pastebin Reddit Rentry Roblox Snapchat Solo.to Soundcloud Steam Tellonym Tiktok Tumblr Twitter WeHeartIt Xbox Yahoo txti.es".split()
+    sites = "Behance EpicGames Github Hotmail Twitch Krunker LastFM Linktree Minecraft Pastebin Reddit Rentry Snapchat Solo.to Soundcloud Steam Tellonym Tiktok Tumblr Twitter WeHeartIt Xbox Yahoo txti.es".split()
     if os.path.isdir('results'):
         pass
     elif os.path.isdir('results') == False:
@@ -112,7 +114,7 @@ def soundcloud():
         exec(mainfunc)
         break
 
-def twitter(): # not done
+def twitter():
     while True:
         global good
         global bad
@@ -141,10 +143,10 @@ def twitter(): # not done
 
                 elif req.status_code == 404:
                     good = good + 1
-                    print(style.RESET + "https://twitter.com"f"{stripped_line}")
+                    print(style.RESET + "https://twitter.com/"f"{stripped_line}")
                     print(style.GREEN + "[+] " + style.RESET + " Username available" + "\n")
                     with open("results/Twitter/" + time1 + ".txt", "a") as results:
-                        results.write("https://twitter.com"f"{stripped_line}" + "\n")
+                        results.write("https://twitter.com/"f"{stripped_line}" + "\n")
                 time.sleep(interval)
         menu()
         print("Checked " + str(count) + " users.\n\n" + style.GREEN + str(good) + style.RESET + " available.\n" + style.RED + str(bad) + style.RESET + " unavailable.\n\nPress any key to return to the main menu.")
@@ -171,16 +173,7 @@ def tiktok(): # not done
         exec(mainfunc)
         break
 
-def twitch(): # not done
-    while True:
-        menu()
-        print(notdone)
-        #print("Checked " + str(count) + " users.\n\n" + style.GREEN + str(good) + style.RESET + " available.\n" + style.RED + str(bad) + style.RESET + " unavailable.\n\nPress any key to return to the main menu.")
-        exec(getch1)
-        exec(mainfunc)
-        break
-
-def reddit(): # not done
+def twitch():
     while True:
         global good
         global bad
@@ -200,7 +193,47 @@ def reddit(): # not done
                 count = count + 1
                 stripped_line = line.strip()
                 sess = requests.Session()
-                req = sess.get(f"https://www.troddit.com/u/{stripped_line}", headers=HEADERS)
+                req = sess.get(f"https://twitchtracker.com/{stripped_line}", headers=HEADERS)
+
+                if req.status_code == 200:
+                    bad = bad + 1
+                    print(style.RESET + f"https://twitch.tv/{stripped_line}")
+                    print(style.RED + "[-] " + style.RESET + " Username not available" + "\n")
+
+                elif req.status_code == 404:
+                    good = good + 1
+                    print(style.RESET + "https://twitch.tv/"f"{stripped_line}")
+                    print(style.GREEN + "[+] " + style.RESET + " Username available" + "\n")
+                    with open("results/Twitch/" + time1 + ".txt", "a") as results:
+                        results.write("https://twitch.tv/"f"{stripped_line}" + "\n")
+                time.sleep(interval)
+        menu()
+        print("Checked " + str(count) + " users.\n\n" + style.GREEN + str(good) + style.RESET + " available.\n" + style.RED + str(bad) + style.RESET + " unavailable.\n\nPress any key to return to the main menu.")
+        exec(getch1)
+        exec(mainfunc)
+        break
+
+def reddit():
+    while True:
+        global good
+        global bad
+        global count
+        global i
+        i = ''
+        good = 0
+        bad = 0
+        count = 0
+        menu()
+        time1 = str(datetime.datetime.now()).split('.')[0].replace(":", "-")
+        input1()
+        menu()
+        with open('wordlists/' + wordlist1 + '.txt', "r") as a_file:
+            for line in a_file:
+                global stripped_line
+                count = count + 1
+                stripped_line = line.strip()
+                sess = requests.Session()
+                req = sess.get(f"https://libredd.it/user/{stripped_line}", headers=HEADERS)
 
                 if req.status_code == 200:
                     bad = bad + 1
@@ -292,11 +325,42 @@ def pastebin():
         exec(mainfunc)
         break
 
-def steam(): # not done
+def steam(): 
     while True:
+        global good
+        global bad
+        global count
+        global i
+        i = ''
+        good = 0
+        bad = 0
+        count = 0
         menu()
-        print(notdone)
-        #print("Checked " + str(count) + " users.\n\n" + style.GREEN + str(good) + style.RESET + " available.\n" + style.RED + str(bad) + style.RESET + " unavailable.\n\nPress any key to return to the main menu.")
+        time1 = str(datetime.datetime.now()).split('.')[0].replace(":", "-")
+        input1()
+        menu()
+        with open('wordlists/' + wordlist1 + '.txt', "r") as a_file:
+            for line in a_file:
+                global stripped_line
+                count = count + 1
+                stripped_line = line.strip()
+                sess = requests.Session()
+                req = sess.get(f"https://steamid.io/lookup/{stripped_line}", headers=HEADERS)
+
+                if req.status_code == 200:
+                    bad = bad + 1
+                    print(style.RESET + f"https://steamcommunity.com/id/{stripped_line}")
+                    print(style.RED + "[-] " + style.RESET + " Username not available" + "\n")
+
+                elif req.status_code == 404:
+                    good = good + 1
+                    print(style.RESET + "https://steamcommunity.com/id/"f"{stripped_line}")
+                    print(style.GREEN + "[+] " + style.RESET + " Username available" + "\n")
+                    with open("results/Reddit/" + time1 + ".txt", "a") as results:
+                        results.write("https://steamcommunity.com/id/"f"{stripped_line}" + "\n")
+                time.sleep(interval)
+        menu()
+        print("Checked " + str(count) + " users.\n\n" + style.GREEN + str(good) + style.RESET + " available.\n" + style.RED + str(bad) + style.RESET + " unavailable.\n\nPress any key to return to the main menu.")
         exec(getch1)
         exec(mainfunc)
         break
@@ -344,11 +408,11 @@ def epicgames(): # not done
         exec(mainfunc)
         break
 
-def lastfm(): # not done
+def lastfm():
     while True:
+        checker("last.fm/user/", "LastFM")
         menu()
-        print(notdone)
-        #print("Checked " + str(count) + " users.\n\n" + style.GREEN + str(good) + style.RESET + " available.\n" + style.RED + str(bad) + style.RESET + " unavailable.\n\nPress any key to return to the main menu.")
+        print("Checked " + str(count) + " users.\n\n" + style.GREEN + str(good) + style.RESET + " available.\n" + style.RED + str(bad) + style.RESET + " unavailable.\n\nPress any key to return to the main menu.")
         exec(getch1)
         exec(mainfunc)
         break
@@ -362,16 +426,7 @@ def xbox(): # not done
         exec(mainfunc)
         break
 
-def roblox(): # not done
-    while True:
-        menu()
-        print(notdone)
-        #print("Checked " + str(count) + " users.\n\n" + style.GREEN + str(good) + style.RESET + " available.\n" + style.RED + str(bad) + style.RESET + " unavailable.\n\nPress any key to return to the main menu.")
-        exec(getch1)
-        exec(mainfunc)
-        break
-
-def minecraft(): # not done
+def minecraft():
     while True:
         global i
         good = 0
@@ -493,7 +548,7 @@ def main():
         i = "                                                          page 1/4"
         menu()
         try:
-            choice=int(input("Choose an option:\n(1) Soundcloud\n(2) Twitter\n(3) WeHeartIt\n(4) Rentry\n(5) Tiktok - not done\n(6) Tellonym\n(7) Reddit - not done\n(8) Twitch - not done\n(9) Go to the next page\n(10) Quit\nChoice: "))
+            choice=int(input("Choose an option:\n(1) Soundcloud\n(2) Twitter\n(3) WeHeartIt\n(4) Rentry\n(5) Tiktok - not done\n(6) Tellonym\n(7) Reddit\n(8) Twitch\n(9) Go to the next page\n(10) Quit\nChoice: "))
             if choice==1:
                 soundcloud()
                 break
@@ -590,7 +645,7 @@ def main3():
         i = "                                                          page 3/4"
         menu()
         try:
-            choice=int(input("Choose an option:\n(1) Steam - not done\n(2) Tumblr\n(3) Epic Games - not done\n(4) LastFM - not done\n(5) Xbox - not done\n(6) Roblox - not done\n(7) Minecraft\n(8) txti.es\n(9) Go to the next page\n(10) Go to the previous page\nChoice: "))
+            choice=int(input("Choose an option:\n(1) Steam\n(2) Tumblr\n(3) Epic Games - not done\n(4) LastFM\n(5) Xbox - not done\n(6) Krunker\n(7) Minecraft\n(8) txti.es\n(9) Go to the next page\n(10) Go to the previous page\nChoice: "))
             if choice==1:
                 steam()
                 break
@@ -607,7 +662,7 @@ def main3():
                 xbox()
                 break
             elif choice==6:
-                roblox()
+                krunker()
                 break
             elif choice==7:
                 minecraft()
@@ -638,9 +693,12 @@ def main4():
         i = "                                                          page 4/4"
         menu()
         try:
-            choice=int(input("Choose an option:\n(1) Krunker\n(2) Go to the previous page\nChoice: "))
+            choice=int(input("Choose an option:\n(1) Placeholder\n(2) Go to the previous page\nChoice: "))
             if choice==1:
-                krunker()
+                menu()
+                print(notdone)
+                exec(getch1)
+                main()
                 break
             elif choice==2:
                 main3()
