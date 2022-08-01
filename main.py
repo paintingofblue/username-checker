@@ -394,6 +394,7 @@ def tumblr():
                     with open("results/Tumblr/" + time1 + ".txt", "a") as results:
                         results.write("https://" + f"{stripped_line}" + ".tumblr.com\n")
                 time.sleep(interval)
+        menu()
         print("Checked " + str(count) + " users.\n\n" + style.GREEN + str(good) + style.RESET + " available.\n" + style.RED + str(bad) + style.RESET + " unavailable.\n\nPress any key to return to the main menu.")
         exec(getch1)
         exec(mainfunc)
@@ -417,11 +418,37 @@ def lastfm():
         exec(mainfunc)
         break
 
-def xbox(): # not done
+def xbox(): 
     while True:
+        input1()
         menu()
-        print(notdone)
-        #print("Checked " + str(count) + " users.\n\n" + style.GREEN + str(good) + style.RESET + " available.\n" + style.RED + str(bad) + style.RESET + " unavailable.\n\nPress any key to return to the main menu.")
+        good = 0
+        bad = 0
+        count = 0
+        time1 = str(datetime.datetime.now()).split('.')[0].replace(":", "-")
+        
+        with open('wordlists/' + wordlist1 + '.txt', "r") as a_file:
+            for line in a_file:
+                global stripped_line
+                count = count + 1
+                stripped_line = line.strip()
+                sess = requests.Session()
+                req = sess.get("https://xboxgamertag.com/search/"f"{stripped_line}", headers=HEADERS)
+
+                if req.status_code == 200:
+                    bad = bad + 1
+                    print(style.RESET + stripped_line)
+                    print(style.RED + "[-] " + style.RESET + " Username not available" + "\n")
+
+                elif req.status_code == 404:
+                    good = good + 1
+                    print(style.RESET + stripped_line)
+                    print(style.GREEN + "[+] " + style.RESET + " Username available" + "\n")
+                    with open("results/Xbox/" + time1 + ".txt", "a") as results:
+                        results.write(stripped_line + "\n")
+                time.sleep(interval)
+        menu()
+        print("Checked " + str(count) + " users.\n\n" + style.GREEN + str(good) + style.RESET + " available.\n" + style.RED + str(bad) + style.RESET + " unavailable.\n\nPress any key to return to the main menu.")
         exec(getch1)
         exec(mainfunc)
         break
@@ -596,7 +623,7 @@ def main2():
         i = "                                                          page 2/4"
         menu()
         try:
-            choice=int(input("Choose an option:\n(1) Behance\n(2) Solo.to\n(3) Linktree\n(4) Snapchat - not done\n(5) Github\n(6) Hotmail/Outlook - checks all TLDS\n(7) Yahoo - checks all TLDS\n(8) Pastebin\n(9) Go to the next page\n(10) Go to the previous page\nChoice: "))
+            choice=int(input("Choose an option:\n(1) Behance\n(2) Solo.to\n(3) Linktree\n(4) Snapchat - not done\n(5) Github\n(6) Hotmail/Outlook - checks all TLDS, not done\n(7) Yahoo - checks all TLDS, not done\n(8) Pastebin\n(9) Go to the next page\n(10) Go to the previous page\nChoice: "))
             if choice==1:
                 behance()
                 break
@@ -645,7 +672,7 @@ def main3():
         i = "                                                          page 3/4"
         menu()
         try:
-            choice=int(input("Choose an option:\n(1) Steam\n(2) Tumblr\n(3) Epic Games - not done\n(4) LastFM\n(5) Xbox - not done\n(6) Krunker\n(7) Minecraft\n(8) txti.es\n(9) Go to the next page\n(10) Go to the previous page\nChoice: "))
+            choice=int(input("Choose an option:\n(1) Steam\n(2) Tumblr\n(3) Epic Games - not done\n(4) LastFM\n(5) Xbox\n(6) Krunker\n(7) Minecraft\n(8) txti.es\n(9) Go to the next page\n(10) Go to the previous page\nChoice: "))
             if choice==1:
                 steam()
                 break
