@@ -80,8 +80,8 @@ def userinput():
     while True:
         global wordlistname
         global interval
-        global i
-        i = ""
+        global pagenum
+        pagenum = ""
         menu()
         wordlistname = str(input("What is the name of the wordlist you want to use?\n(Note that the program automatically appends .txt to your input.)\n"))
         try:
@@ -111,8 +111,8 @@ def twitter():
         global good
         global bad
         global count
-        global i
-        i = ""
+        global pagenum
+        pagenum = ""
         good = 0
         bad = 0
         count = 0
@@ -170,8 +170,8 @@ def twitch():
         global good
         global bad
         global count
-        global i
-        i = ""
+        global pagenum
+        pagenum = ""
         good = 0
         bad = 0
         count = 0
@@ -210,8 +210,8 @@ def reddit():
         global good
         global bad
         global count
-        global i
-        i = ""
+        global pagenum
+        pagenum = ""
         good = 0
         bad = 0
         count = 0
@@ -322,8 +322,8 @@ def steam():
         global good
         global bad
         global count
-        global i
-        i = ""
+        global pagenum
+        pagenum = ""
         good = 0
         bad = 0
         count = 0
@@ -447,12 +447,12 @@ def xbox():
 
 def minecraft():
     while True:
-        global i
+        global pagenum
         good = 0
         bad = 0
         count = 0
         currentdate = str(datetime.datetime.now()).split(".")[0].replace(":", "-")
-        i = ""
+        pagenum = ""
         userinput()
         menu()
         makedirs()
@@ -515,12 +515,12 @@ def tellonym():
 
 def krunker():
     while True:
-        global i
+        global pagenum
         good = 0
         bad = 0
         count = 0
         currentdate = str(datetime.datetime.now()).split(".")[0].replace(":", "-")
-        i = ""
+        pagenum = ""
         userinput()
         menu()
         with open(f"wordlists/{wordlistname}.txt", "r") as wordlistfile:
@@ -572,8 +572,8 @@ def main():
     while True:
         makedirs()
         os.system(clear)
-        global i
-        i = "                                                          page 1/3"
+        global pagenum
+        pagenum = "                                                          page 1/3"
         menu()
         try:
             choice=int(input("Choose an option:\n(1) Soundcloud\n(2) Twitter\n(3) WeHeartIt\n(4) Rentry\n(5) Tiktok - not done\n(6) Tellonym\n(7) Reddit\n(8) Twitch\n(9) Go to the next page\n(10) Quit\nChoice: "))
@@ -620,8 +620,8 @@ def main2():
     while True:
         makedirs()
         os.system(clear)
-        global i
-        i = "                                                          page 2/3"
+        global pagenum
+        pagenum = "                                                          page 2/3"
         menu()
         try:
             choice=int(input("Choose an option:\n(1) Behance\n(2) Solo.to\n(3) Linktree\n(4) Snapchat - not done\n(5) Github\n(6) Hotmail/Outlook - checks all TLDS, not done\n(7) Yahoo - checks all TLDS, not done\n(8) Pastebin\n(9) Go to the next page\n(10) Go to the previous page\nChoice: "))
@@ -669,8 +669,8 @@ def main3():
     while True:
         makedirs()
         os.system(clear)
-        global i
-        i = "                                                          page 3/3"
+        global pagenum
+        pagenum = "                                                          page 3/3"
         menu()
         try:
             choice=int(input("Choose an option:\n(1) Steam\n(2) Tumblr\n(3) Epic Games - not done\n(4) LastFM\n(5) Xbox\n(6) Krunker\n(7) Minecraft\n(8) txti.es\n(9) OGU\n(10) Go to the previous page\nChoice: "))
@@ -714,7 +714,7 @@ def main3():
             continue
 
 def menu():
-    global i
+    global pagenum
     os.system(clear)
     print(f"""
   _    _  _____ ______ _____  _   _          __  __ ______  _____ 
@@ -725,10 +725,10 @@ def menu():
   \____/|_____/|______|_|  \_\_| \_/_/    \_\_|  |_|______|_____/ 
                                                                   
                                  made by github.com/paintingofblue
-{i}
+{pagenum}
 __________________________________________________________________
 """)
-    i = ""
+    pagenum = ""
 
 if __name__ == "__main__":
     main()
