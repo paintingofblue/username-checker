@@ -688,7 +688,7 @@ def page2():
         pagenumber = "                                                          page 2/3"
         menu()
         try:
-            choice=int(input("Choose an option:\n(1) Behance\n(2) Solo.to\n(3) Linktree\n(4) Snapchat - not done\n(5) Github\n(8) txti.es\n(9) OGU\n(8) Pastebin\n(9) Go to the next page\n(10) Go to the previous page\nChoice: "))
+            choice=int(input("Choose an option:\n(1) Behance\n(2) Solo.to\n(3) Linktree\n(4) Snapchat - not done\n(5) Github\n(6) txti.es\n(7) OGU\n(8) Pastebin\n(9) Go to the next page\n(10) Go to the previous page\nChoice: "))
             if choice==1:
                 behance()
                 break
