@@ -3,19 +3,22 @@ import platform
 import requests
 import datetime
 import time
+import undetected_chromedriver as uc
+from selenium.webdriver.common.by import By
+
 
 
 operatingsys = platform.system()
 if operatingsys == "Windows":
     import msvcrt
     clear = "cls"
-    getch1 = "msvcrt.getch()"
-    mainfunc = "main()"
+    getchinput = "msvcrt.getch()"
+    mainfunc = "page1()"
 elif operatingsys == "Linux" or "Darwin":
     from getch import getch # type:ignore
     clear = "clear"
-    getch1 = "getch()"
-    mainfunc = "main()"
+    getchinput = "getch()"
+    mainfunc = "page1()"
 
 HEADERS = {
     "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9",
@@ -80,8 +83,8 @@ def userinput():
     while True:
         global wordlistname
         global interval
-        global pagenum
-        pagenum = ""
+        global pagenumber
+        pagenumber = ""
         menu()
         wordlistname = str(input("What is the name of the wordlist you want to use?\n(Note that the program automatically appends .txt to your input.)\n"))
         try:
@@ -90,7 +93,7 @@ def userinput():
         except:
             menu()
             print("The file you entered either doesnt exist or was incorrectly entered.\nPlease try again.\n\nPress any key to continue.")
-            exec(getch1)
+            exec(getchinput)
             exec(mainfunc)
             break
         menu()
@@ -102,7 +105,7 @@ def soundcloud():
         checker("soundcloud.com/", "Soundcloud")
         menu()
         print(f"Checked {str(count)} users.\n\n{style.GREEN}{str(good)}{style.RESET} available.\n{style.RED}{str(bad)}{style.RESET} unavailable.\n\nPress any key to return to the main menu.")
-        exec(getch1)
+        exec(getchinput)
         exec(mainfunc)
         break
 
@@ -111,8 +114,8 @@ def twitter():
         global good
         global bad
         global count
-        global pagenum
-        pagenum = ""
+        global pagenumber
+        pagenumber = ""
         good = 0
         bad = 0
         count = 0
@@ -142,7 +145,7 @@ def twitter():
                 time.sleep(interval)
         menu()
         print(f"Checked {str(count)} users.\n\n{style.GREEN}{str(good)}{style.RESET} available.\n{style.RED}{str(bad)}{style.RESET} unavailable.\n\nPress any key to return to the main menu.")
-        exec(getch1)
+        exec(getchinput)
         exec(mainfunc)
         break
     
@@ -152,16 +155,47 @@ def weheartit():
         checker("weheartit.com/", "WeHeartIt")
         menu()
         print(f"Checked {str(count)} users.\n\n{style.GREEN}{str(good)}{style.RESET} available.\n{style.RED}{str(bad)}{style.RESET} unavailable.\n\nPress any key to return to the main menu.")
-        exec(getch1)
+        exec(getchinput)
         exec(mainfunc)
         break
 
-def tiktok(): # not done
+def tiktok():
     while True:
+        global pagenumber
+        good = 0
+        bad = 0
+        count = 0
+        currentdate = str(datetime.datetime.now()).split(".")[0].replace(":", "-")
+        pagenumber = ""
+        userinput()
         menu()
-        print(notdone)
-        #print(f"Checked {str(count)} users.\n\n{style.GREEN}{str(good)}{style.RESET} available.\n{style.RED}{str(bad)}{style.RESET} unavailable.\n\nPress any key to return to the main menu.")
-        exec(getch1)
+        
+        options = uc.ChromeOptions()
+        options.headless=True
+        options.add_argument('--headless')
+        driver = uc.Chrome(options=options)
+        
+        with open(f"wordlists/{wordlistname}.txt", "r") as wordlistfile:
+            for line in wordlistfile:
+                global username
+                count = count + 1
+                username = line.strip()
+                driver.get(f'https://tiktok.com/@{username}')
+                try:
+                    if driver.find_element(By.XPATH, '//*[@id="app"]/div[2]/div[2]/div/main/div/p[1]').text == "Couldn't find this account":
+                        good = good + 1
+                        print(f"{style.RESET}https://tiktok.com/@{username}")
+                        print(f"{style.GREEN}[+] {style.RESET} Username available\n")
+                        with open(f"results/Tiktok/{currentdate}.txt", "a") as results:
+                            results.write(f"https://tiktok.com/@{username}\n")
+                except:
+                    bad = bad + 1
+                    print(f"{style.RESET}https://tiktok.com/@{username}")
+                    print(f"{style.RED}[-] {style.RESET} Username not available\n")
+                time.sleep(interval)   
+        menu()
+        print(f"Checked {str(count)} users.\n\n{style.GREEN}{str(good)}{style.RESET} available.\n{style.RED}{str(bad)}{style.RESET} unavailable.\n\nPress any key to return to the main menu.")
+        exec(getchinput)
         exec(mainfunc)
         break
 
@@ -170,8 +204,8 @@ def twitch():
         global good
         global bad
         global count
-        global pagenum
-        pagenum = ""
+        global pagenumber
+        pagenumber = ""
         good = 0
         bad = 0
         count = 0
@@ -201,7 +235,7 @@ def twitch():
                 time.sleep(interval)
         menu()
         print(f"Checked {str(count)} users.\n\n{style.GREEN}{str(good)}{style.RESET} available.\n{style.RED}{str(bad)}{style.RESET} unavailable.\n\nPress any key to return to the main menu.")
-        exec(getch1)
+        exec(getchinput)
         exec(mainfunc)
         break
 
@@ -210,8 +244,8 @@ def reddit():
         global good
         global bad
         global count
-        global pagenum
-        pagenum = ""
+        global pagenumber
+        pagenumber = ""
         good = 0
         bad = 0
         count = 0
@@ -241,7 +275,7 @@ def reddit():
                 time.sleep(interval)
         menu()
         print(f"Checked {str(count)} users.\n\n{style.GREEN}{str(good)}{style.RESET} available.\n{style.RED}{str(bad)}{style.RESET} unavailable.\n\nPress any key to return to the main menu.")
-        exec(getch1)
+        exec(getchinput)
         exec(mainfunc)
         break
 
@@ -250,7 +284,7 @@ def behance():
         checker("behance.net/", "Behance")
         menu()
         print(f"Checked {str(count)} users.\n\n{style.GREEN}{str(good)}{style.RESET} available.\n{style.RED}{str(bad)}{style.RESET} unavailable.\n\nPress any key to return to the main menu.")
-        exec(getch1)
+        exec(getchinput)
         exec(mainfunc)
         break
 
@@ -259,7 +293,7 @@ def soloto():
         checker("solo.to/", "Solo.to")
         menu()
         print(f"Checked {str(count)} users.\n\n{style.GREEN}{str(good)}{style.RESET} available.\n{style.RED}{str(bad)}{style.RESET} unavailable.\n\nPress any key to return to the main menu.")
-        exec(getch1)
+        exec(getchinput)
         exec(mainfunc)
         break
 
@@ -268,7 +302,7 @@ def linktree():
         checker("linktr.ee/", "Linktree")
         menu()
         print(f"Checked {str(count)} users.\n\n{style.GREEN}{str(good)}{style.RESET} available.\n{style.RED}{str(bad)}{style.RESET} unavailable.\n\nPress any key to return to the main menu.")
-        exec(getch1)
+        exec(getchinput)
         exec(mainfunc)
         break
 
@@ -277,7 +311,7 @@ def snapchat(): # not done
         menu()
         print(notdone)
         #print(f"Checked {str(count)} users.\n\n{style.GREEN}{str(good)}{style.RESET} available.\n{style.RED}{str(bad)}{style.RESET} unavailable.\n\nPress any key to return to the main menu.")
-        exec(getch1)
+        exec(getchinput)
         exec(mainfunc)
         break
 
@@ -286,7 +320,7 @@ def github():
         checker("github.com/", "Github")
         menu()
         print(f"Checked {str(count)} users.\n\n{style.GREEN}{str(good)}{style.RESET} available.\n{style.RED}{str(bad)}{style.RESET} unavailable.\n\nPress any key to return to the main menu.")
-        exec(getch1)
+        exec(getchinput)
         exec(mainfunc)
         break
 
@@ -295,7 +329,7 @@ def hotmail(): # not done
         menu()
         print(notdone)
         #print(f"Checked {str(count)} users.\n\n{style.GREEN}{str(good)}{style.RESET} available.\n{style.RED}{str(bad)}{style.RESET} unavailable.\n\nPress any key to return to the main menu.")
-        exec(getch1)
+        exec(getchinput)
         exec(mainfunc)
         break
 
@@ -304,7 +338,7 @@ def yahoo(): # not done
         menu()
         print(notdone)
         #print(f"Checked {str(count)} users.\n\n{style.GREEN}{str(good)}{style.RESET} available.\n{style.RED}{str(bad)}{style.RESET} unavailable.\n\nPress any key to return to the main menu.")
-        exec(getch1)
+        exec(getchinput)
         exec(mainfunc)
         break
 
@@ -313,7 +347,7 @@ def pastebin():
         checker("pastebin.com/u/", "Pastebin")
         menu()
         print(f"Checked {str(count)} users.\n\n{style.GREEN}{str(good)}{style.RESET} available.\n{style.RED}{str(bad)}{style.RESET} unavailable.\n\nPress any key to return to the main menu.")
-        exec(getch1)
+        exec(getchinput)
         exec(mainfunc)
         break
 
@@ -322,8 +356,8 @@ def steam():
         global good
         global bad
         global count
-        global pagenum
-        pagenum = ""
+        global pagenumber
+        pagenumber = ""
         good = 0
         bad = 0
         count = 0
@@ -353,7 +387,7 @@ def steam():
                 time.sleep(interval)
         menu()
         print(f"Checked {str(count)} users.\n\n{style.GREEN}{str(good)}{style.RESET} available.\n{style.RED}{str(bad)}{style.RESET} unavailable.\n\nPress any key to return to the main menu.")
-        exec(getch1)
+        exec(getchinput)
         exec(mainfunc)
         break
 
@@ -388,7 +422,7 @@ def tumblr():
                 time.sleep(interval)
         menu()
         print(f"Checked {str(count)} users.\n\n{style.GREEN}{str(good)}{style.RESET} available.\n{style.RED}{str(bad)}{style.RESET} unavailable.\n\nPress any key to return to the main menu.")
-        exec(getch1)
+        exec(getchinput)
         exec(mainfunc)
         break
 
@@ -397,7 +431,7 @@ def epicgames(): # not done
         menu()
         print(notdone)
         #print(f"Checked {str(count)} users.\n\n{style.GREEN}{str(good)}{style.RESET} available.\n{style.RED}{str(bad)}{style.RESET} unavailable.\n\nPress any key to return to the main menu.")
-        exec(getch1)
+        exec(getchinput)
         exec(mainfunc)
         break
 
@@ -406,7 +440,7 @@ def lastfm():
         checker("last.fm/user/", "LastFM")
         menu()
         print(f"Checked {str(count)} users.\n\n{style.GREEN}{str(good)}{style.RESET} available.\n{style.RED}{str(bad)}{style.RESET} unavailable.\n\nPress any key to return to the main menu.")
-        exec(getch1)
+        exec(getchinput)
         exec(mainfunc)
         break
 
@@ -441,18 +475,18 @@ def xbox():
                 time.sleep(interval)
         menu()
         print(f"Checked {str(count)} users.\n\n{style.GREEN}{str(good)}{style.RESET} available.\n{style.RED}{str(bad)}{style.RESET} unavailable.\n\nPress any key to return to the main menu.")
-        exec(getch1)
+        exec(getchinput)
         exec(mainfunc)
         break
 
 def minecraft():
     while True:
-        global pagenum
+        global pagenumber
         good = 0
         bad = 0
         count = 0
         currentdate = str(datetime.datetime.now()).split(".")[0].replace(":", "-")
-        pagenum = ""
+        pagenumber = ""
         userinput()
         menu()
         makedirs()
@@ -491,7 +525,7 @@ def minecraft():
                 time.sleep(interval)   
         menu()
         print(f"Checked {str(count)} users.\n\n{style.GREEN}{str(good)}{style.RESET} available.\n{style.RED}{str(bad)}{style.RESET} unavailable.\n\nPress any key to return to the main menu.")
-        exec(getch1)
+        exec(getchinput)
         exec(mainfunc)
         break
 
@@ -500,7 +534,7 @@ def txties():
         checker("txti.es/", "txti.es")
         menu()
         print(f"Checked {str(count)} users.\n\n{style.GREEN}{str(good)}{style.RESET} available.\n{style.RED}{str(bad)}{style.RESET} unavailable.\n\nPress any key to return to the main menu.")
-        exec(getch1)
+        exec(getchinput)
         exec(mainfunc)
         break
 
@@ -509,18 +543,18 @@ def tellonym():
         checker("tellonym.me/", "Tellonym")
         menu()
         print(f"Checked {str(count)} users.\n\n{style.GREEN}{str(good)}{style.RESET} available.\n{style.RED}{str(bad)}{style.RESET} unavailable.\n\nPress any key to return to the main menu.")
-        exec(getch1)
+        exec(getchinput)
         exec(mainfunc)
         break
 
 def krunker():
     while True:
-        global pagenum
+        global pagenumber
         good = 0
         bad = 0
         count = 0
         currentdate = str(datetime.datetime.now()).split(".")[0].replace(":", "-")
-        pagenum = ""
+        pagenumber = ""
         userinput()
         menu()
         with open(f"wordlists/{wordlistname}.txt", "r") as wordlistfile:
@@ -546,7 +580,7 @@ def krunker():
                 
         menu()
         print(f"Checked {str(count)} users.\n\n{style.GREEN}{str(good)}{style.RESET} available.\n{style.RED}{str(bad)}{style.RESET} unavailable.\n\nPress any key to return to the main menu.")
-        exec(getch1)
+        exec(getchinput)
         exec(mainfunc)
         break
  
@@ -555,28 +589,58 @@ def rentry():
         checker("rentry.co/", "Rentry")
         menu()
         print(f"Checked {str(count)} users.\n\n{style.GREEN}{str(good)}{style.RESET} available.\n{style.RED}{str(bad)}{style.RESET} unavailable.\n\nPress any key to return to the main menu.")
-        exec(getch1)
+        exec(getchinput)
         exec(mainfunc)
         break
 
 def ogusers():
     while True:
-        checker("ogu.gg/", "OGUsers")
+        global pagenumber
+        good = 0
+        bad = 0
+        count = 0
+        currentdate = str(datetime.datetime.now()).split(".")[0].replace(":", "-")
+        pagenumber = ""
+        userinput()
+        menu()
+        
+        options = uc.ChromeOptions()
+        options.headless=True
+        options.add_argument('--headless')
+        driver = uc.Chrome(options=options)
+        
+        with open(f"wordlists/{wordlistname}.txt", "r") as wordlistfile:
+            for line in wordlistfile:
+                global username
+                count = count + 1
+                username = line.strip()
+                driver.get(f'https://ogu.gg/{username}')
+                if "The member you specified is either invalid or doesn't exist." in driver.page_source:
+                    good = good + 1
+                    print(f"{style.RESET}https://ogu.gg/{username}")
+                    print(f"{style.GREEN}[+] {style.RESET} Username available\n")
+                    with open(f"results/OGUsers/{currentdate}.txt", "a") as results:
+                        results.write(f"https://ogu.gg/{username}\n")
+                else:
+                    bad = bad + 1
+                    print(f"{style.RESET}https://ogu.gg/{username}")
+                    print(f"{style.RED}[-] {style.RESET} Username not available\n")
+                time.sleep(interval)   
         menu()
         print(f"Checked {str(count)} users.\n\n{style.GREEN}{str(good)}{style.RESET} available.\n{style.RED}{str(bad)}{style.RESET} unavailable.\n\nPress any key to return to the main menu.")
-        exec(getch1)
+        exec(getchinput)
         exec(mainfunc)
         break
 
-def main():
+def page1():
     while True:
         makedirs()
         os.system(clear)
-        global pagenum
-        pagenum = "                                                          page 1/3"
+        global pagenumber
+        pagenumber = "                                                          page 1/3"
         menu()
         try:
-            choice=int(input("Choose an option:\n(1) Soundcloud\n(2) Twitter\n(3) WeHeartIt\n(4) Rentry\n(5) Tiktok - not done\n(6) Tellonym\n(7) Reddit\n(8) Twitch\n(9) Go to the next page\n(10) Quit\nChoice: "))
+            choice=int(input("Choose an option:\n(1) Soundcloud\n(2) Twitter\n(3) WeHeartIt\n(4) Rentry\n(5) Tiktok\n(6) Tellonym\n(7) Reddit\n(8) Twitch\n(9) Go to the next page\n(10) Quit\nChoice: "))
             if choice==1:
                 soundcloud()
                 break
@@ -602,29 +666,29 @@ def main():
                 twitch()
                 break
             elif choice==9:
-                main2()
+                page2()
                 break
             elif choice==10:
                 os.system(clear)
                 break
             else:
                 print("That was an incorrect answer. Press any key to continue")
-                exec(getch1)
+                exec(getchinput)
                 continue
         except:
             print("That was an incorrect answer. Press any key to continue")
-            exec(getch1)
+            exec(getchinput)
             continue
 
-def main2():
+def page2():
     while True:
         makedirs()
         os.system(clear)
-        global pagenum
-        pagenum = "                                                          page 2/3"
+        global pagenumber
+        pagenumber = "                                                          page 2/3"
         menu()
         try:
-            choice=int(input("Choose an option:\n(1) Behance\n(2) Solo.to\n(3) Linktree\n(4) Snapchat - not done\n(5) Github\n(6) Hotmail/Outlook - checks all TLDS, not done\n(7) Yahoo - checks all TLDS, not done\n(8) Pastebin\n(9) Go to the next page\n(10) Go to the previous page\nChoice: "))
+            choice=int(input("Choose an option:\n(1) Behance\n(2) Solo.to\n(3) Linktree\n(4) Snapchat - not done\n(5) Github\n(8) txti.es\n(9) OGU\n(8) Pastebin\n(9) Go to the next page\n(10) Go to the previous page\nChoice: "))
             if choice==1:
                 behance()
                 break
@@ -641,39 +705,39 @@ def main2():
                 github()
                 break
             elif choice==6:
-                hotmail()
+                txties()
                 break
             elif choice==7:
-                yahoo()
+                ogusers()
                 break
             elif choice==8:
                 pastebin()
                 break
             elif choice==9:
-                main3()
+                page3()
                 break
             elif choice==10:
                 os.system(clear)
-                main()
+                page1()
                 break
             else:
                 print("That was an incorrect answer. Press any key to continue")
-                exec(getch1)
+                exec(getchinput)
                 continue
         except:
             print("That was an incorrect answer. Press any key to continue")
-            exec(getch1)
+            exec(getchinput)
             continue
 
-def main3():
+def page3():
     while True:
         makedirs()
         os.system(clear)
-        global pagenum
-        pagenum = "                                                          page 3/3"
+        global pagenumber
+        pagenumber = "                                                          page 3/3"
         menu()
         try:
-            choice=int(input("Choose an option:\n(1) Steam\n(2) Tumblr\n(3) Epic Games - not done\n(4) LastFM\n(5) Xbox\n(6) Krunker\n(7) Minecraft\n(8) txti.es\n(9) OGU\n(10) Go to the previous page\nChoice: "))
+            choice=int(input("Choose an option:\n(1) Steam\n(2) Tumblr\n(3) Epic Games - not done\n(4) LastFM\n(5) Xbox\n(6) Krunker\n(7) Minecraft\n(8) Go to the previous page\nChoice: "))
             if choice==1:
                 steam()
                 break
@@ -696,25 +760,19 @@ def main3():
                 minecraft()
                 break
             elif choice==8:
-                txties()
-                break
-            elif choice==9:
-                ogusers()
-                break
-            elif choice==10:
-                main2()
+                page2()
                 break
             else:
                 print("That was an incorrect answer. Press any key to continue")
-                exec(getch1)
+                exec(getchinput)
                 continue
         except:
             print("That was an incorrect answer. Press any key to continue")
-            exec(getch1)
+            exec(getchinput)
             continue
 
 def menu():
-    global pagenum
+    global pagenumber
     os.system(clear)
     print(f"""
   _    _  _____ ______ _____  _   _          __  __ ______  _____ 
@@ -725,10 +783,10 @@ def menu():
   \____/|_____/|______|_|  \_\_| \_/_/    \_\_|  |_|______|_____/ 
                                                                   
                                  made by github.com/paintingofblue
-{pagenum}
+{pagenumber}
 __________________________________________________________________
 """)
-    pagenum = ""
+    pagenumber = ""
 
 if __name__ == "__main__":
-    main()
+    page1()
