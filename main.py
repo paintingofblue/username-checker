@@ -20,14 +20,12 @@ elif operatingsys == "Linux" or "Darwin":
     getchinput = "getch()"
     mainfunc = "page1()"
 
-HEADERS = {
+headers = {
     "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9",
     "Accept-Encoding": "gzip, deflate, br",
     "Accept-Language": "fr,en-US;q=0.9,en;q=0.8",
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.93 Safari/537.36"
 }
-
-notdone = "This site isnt done.\n\nPress any key to return to the main menu."
 
 class style():
     RED = "\033[31m"
@@ -64,7 +62,7 @@ def checker(website, resultsdir):
             count = count + 1
             username = line.strip()
             sess = requests.Session()
-            req = sess.get(f"https://{website}{username}", headers=HEADERS)
+            req = sess.get(f"https://{website}{username}", headers=headers)
 
             if req.status_code == 200:
                 bad = bad + 1
@@ -84,6 +82,7 @@ def userinput():
         global wordlistname
         global interval
         global pagenumber
+        global checktype
         pagenumber = ""
         menu()
         wordlistname = str(input("What is the name of the wordlist you want to use?\n(Note that the program automatically appends .txt to your input.)\n"))
@@ -92,12 +91,15 @@ def userinput():
             pass
         except:
             menu()
-            print("The file you entered either doesnt exist or was incorrectly entered.\nPlease try again.\n\nPress any key to continue.")
+            print("The file you entered either doesnt exist or was incorrectly entered.\n\nPress any key to continue.")
             exec(getchinput)
             exec(mainfunc)
             break
         menu()
-        interval = float(input("What delay do you want to have inbetween checks?\n(This is helpful to avoid ratelimiting & anti-spam measures on some sites.)\n"))
+        try:
+            checktype = checktype
+        except:
+            interval = float(input("What delay do you want to have inbetween checks?\n(This is helpful to avoid ratelimiting & anti-spam measures on some sites.)\n"))
         break
 
 def soundcloud():
@@ -129,7 +131,7 @@ def twitter():
                 count = count + 1
                 username = line.strip()
                 sess = requests.Session()
-                req = sess.get(f"https://nitter.it/{username}", headers=HEADERS)
+                req = sess.get(f"https://nitter.it/{username}", headers=headers)
 
                 if req.status_code == 200:
                     bad = bad + 1
@@ -152,6 +154,8 @@ def twitter():
 
 def weheartit():
     while True:
+        global checktype
+        checktype = "ratelimit"
         checker("weheartit.com/", "WeHeartIt")
         menu()
         print(f"Checked {str(count)} users.\n\n{style.GREEN}{str(good)}{style.RESET} available.\n{style.RED}{str(bad)}{style.RESET} unavailable.\n\nPress any key to return to the main menu.")
@@ -219,7 +223,7 @@ def twitch():
                 count = count + 1
                 username = line.strip()
                 sess = requests.Session()
-                req = sess.get(f"https://twitchtracker.com/{username}", headers=HEADERS)
+                req = sess.get(f"https://twitchtracker.com/{username}", headers=headers)
 
                 if req.status_code == 200:
                     bad = bad + 1
@@ -259,7 +263,7 @@ def reddit():
                 count = count + 1
                 username = line.strip()
                 sess = requests.Session()
-                req = sess.get(f"https://libredd.it/user/{username}", headers=HEADERS)
+                req = sess.get(f"https://libredd.it/user/{username}", headers=headers)
 
                 if req.status_code == 200:
                     bad = bad + 1
@@ -306,11 +310,44 @@ def linktree():
         exec(mainfunc)
         break
 
-def snapchat(): # not done
+def snapchat():
+    global checktype
     while True:
+        checktype = "ratelimit"
+        good = 0
+        bad = 0
+        count = 0
+        currentdate = str(datetime.datetime.now()).split(".")[0].replace(":", "-")
+        userinput()
         menu()
-        print(notdone)
-        #print(f"Checked {str(count)} users.\n\n{style.GREEN}{str(good)}{style.RESET} available.\n{style.RED}{str(bad)}{style.RESET} unavailable.\n\nPress any key to return to the main menu.")
+        with open(f"wordlists/{wordlistname}.txt", "r") as wordlistfile:
+            for line in wordlistfile:
+                global username
+                count = count + 1
+                username = line.strip()
+                url = "https://accounts.snapchat.com:443/accounts/get_username_suggestions"
+                session = requests.Session()
+                session.get("https://accounts.snapchat.com/accounts/login", headers=headers)
+                xsrf_token = session.cookies.get_dict()['xsrf_token']
+                cookies = {"xsrf_token": xsrf_token}
+                data = {"requested_username": username, "xsrf_token": xsrf_token}
+                r = requests.post(url, headers=headers, cookies=cookies, data=data)
+                statuscode = r.json()["value"]["status_code"]
+                if statuscode == "OK":
+                    good = good + 1
+                    print(f"{style.RESET}@{username}")
+                    print(f"{style.GREEN}[+] {style.RESET} Username available\n")
+                    with open(f"results/Snapchat/{currentdate}.txt", "a") as results:
+                        results.write(f"@{username}\n")
+                elif statuscode == "TAKEN" or statuscode == "INVALID_BEGIN" or statuscode == "TOO_SHORT" or statuscode == "TOO_LONG" or statuscode == "INVALID_CHAR" or statuscode == "DELETED":
+                    bad = bad + 1
+                    print(f"{style.RESET}@{username}")
+                    print(f"{style.RED}[-] {style.RESET} Username not available\n")
+                else:
+                    print("Ratelimited.\nWaiting 30 seconds.\n")
+                    time.sleep(30)
+                time.sleep(0.5)
+        print(f"Checked {str(count)} users.\n\n{style.GREEN}{str(good)}{style.RESET} available.\n{style.RED}{str(bad)}{style.RESET} unavailable.\n\nPress any key to return to the main menu.")
         exec(getchinput)
         exec(mainfunc)
         break
@@ -320,24 +357,6 @@ def github():
         checker("github.com/", "Github")
         menu()
         print(f"Checked {str(count)} users.\n\n{style.GREEN}{str(good)}{style.RESET} available.\n{style.RED}{str(bad)}{style.RESET} unavailable.\n\nPress any key to return to the main menu.")
-        exec(getchinput)
-        exec(mainfunc)
-        break
-
-def hotmail(): # not done
-    while True:
-        menu()
-        print(notdone)
-        #print(f"Checked {str(count)} users.\n\n{style.GREEN}{str(good)}{style.RESET} available.\n{style.RED}{str(bad)}{style.RESET} unavailable.\n\nPress any key to return to the main menu.")
-        exec(getchinput)
-        exec(mainfunc)
-        break
-
-def yahoo(): # not done
-    while True:
-        menu()
-        print(notdone)
-        #print(f"Checked {str(count)} users.\n\n{style.GREEN}{str(good)}{style.RESET} available.\n{style.RED}{str(bad)}{style.RESET} unavailable.\n\nPress any key to return to the main menu.")
         exec(getchinput)
         exec(mainfunc)
         break
@@ -371,7 +390,7 @@ def steam():
                 count = count + 1
                 username = line.strip()
                 sess = requests.Session()
-                req = sess.get(f"https://steamid.io/lookup/{username}", headers=HEADERS)
+                req = sess.get(f"https://steamid.io/lookup/{username}", headers=headers)
 
                 if req.status_code == 200:
                     bad = bad + 1
@@ -406,7 +425,7 @@ def tumblr():
                 count = count + 1
                 username = line.strip()
                 sess = requests.Session()
-                req = sess.get(f"https://{username}.tumblr.com", headers=HEADERS)
+                req = sess.get(f"https://{username}.tumblr.com", headers=headers)
 
                 if req.status_code == 200:
                     bad = bad + 1
@@ -426,11 +445,36 @@ def tumblr():
         exec(mainfunc)
         break
 
-def epicgames(): # not done
+def epicgames():
     while True:
+        global pagenumber
+        good = 0
+        bad = 0
+        count = 0
+        currentdate = str(datetime.datetime.now()).split(".")[0].replace(":", "-")
+        pagenumber = ""
+        userinput()
         menu()
-        print(notdone)
-        #print(f"Checked {str(count)} users.\n\n{style.GREEN}{str(good)}{style.RESET} available.\n{style.RED}{str(bad)}{style.RESET} unavailable.\n\nPress any key to return to the main menu.")
+        with open(f"wordlists/{wordlistname}.txt", "r") as wordlistfile:
+            for line in wordlistfile:
+                global username
+                count = count + 1
+                username = line.strip()
+                r = requests.get(f'https://fortnitetracker.com/profile/all/{username}')
+                if r.status_code == 200 or len(username) <= 3:
+                    bad = bad + 1
+                    print(f"{style.RESET}{username}")
+                    print(f"{style.RED}[-] {style.RESET} Username not available\n")
+
+                elif r.status_code == 404 and len(username) <=17:
+                    good = good + 1
+                    print(f"{style.RESET}{username}")
+                    print(f"{style.GREEN}[+] {style.RESET} Username available\n")
+                    with open(f"results/EpicGames/{currentdate}.txt", "a") as results:
+                        results.write(f"{username}\n")
+                time.sleep(interval)
+        menu()
+        print(f"Checked {str(count)} users.\n\n{style.GREEN}{str(good)}{style.RESET} available.\n{style.RED}{str(bad)}{style.RESET} unavailable.\n\nPress any key to return to the main menu.")
         exec(getchinput)
         exec(mainfunc)
         break
@@ -459,7 +503,7 @@ def xbox():
                 count = count + 1
                 username = line.strip()
                 sess = requests.Session()
-                req = sess.get(f"https://xboxgamertag.com/search/{username}", headers=HEADERS)
+                req = sess.get(f"https://xboxgamertag.com/search/{username}", headers=headers)
 
                 if req.status_code == 200:
                     bad = bad + 1
@@ -688,7 +732,7 @@ def page2():
         pagenumber = "                                                          page 2/3"
         menu()
         try:
-            choice=int(input("Choose an option:\n(1) Behance\n(2) Solo.to\n(3) Linktree\n(4) Snapchat - not done\n(5) Github\n(6) txti.es\n(7) OGU\n(8) Pastebin\n(9) Go to the next page\n(10) Go to the previous page\nChoice: "))
+            choice=int(input("Choose an option:\n(1) Behance\n(2) Solo.to\n(3) Linktree\n(4) Snapchat\n(5) Github\n(6) txti.es\n(7) OGU\n(8) Pastebin\n(9) Go to the next page\n(10) Go to the previous page\nChoice: "))
             if choice==1:
                 behance()
                 break
@@ -737,7 +781,7 @@ def page3():
         pagenumber = "                                                          page 3/3"
         menu()
         try:
-            choice=int(input("Choose an option:\n(1) Steam\n(2) Tumblr\n(3) Epic Games - not done\n(4) LastFM\n(5) Xbox\n(6) Krunker\n(7) Minecraft\n(8) Go to the previous page\nChoice: "))
+            choice=int(input("Choose an option:\n(1) Steam\n(2) Tumblr\n(3) Epic Games\n(4) LastFM\n(5) Xbox\n(6) Krunker\n(7) Minecraft\n(8) Go to the previous page\nChoice: "))
             if choice==1:
                 steam()
                 break
