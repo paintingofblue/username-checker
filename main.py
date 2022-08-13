@@ -33,7 +33,7 @@ class style():
     RESET = "\033[0m"
 
 def makedirs():
-    sites = "Behance EpicGames Github Hotmail Twitch Krunker OGUsers LastFM Linktree Minecraft Pastebin Reddit Rentry Snapchat Solo.to Soundcloud Steam Tellonym Tiktok Tumblr Twitter WeHeartIt Xbox Yahoo txti.es".split()
+    sites = "Behance EpicGames Github Hotmail Twitch Krunker OGUsers LastFM Linktree Minecraft Pastebin Reddit Rentry Snapchat Solo.to Soundcloud Steam Tellonym Tiktok Tumblr Twitter WeHeartIt Xbox Yahoo txti.es Instagram".split()
     if os.path.isdir("results"):
         pass
     elif os.path.isdir("results") == False:
@@ -676,6 +676,47 @@ def ogusers():
         exec(mainfunc)
         break
 
+def instagram():
+    while True:
+        global pagenumber
+        good = 0
+        bad = 0
+        count = 0
+        currentdate = str(datetime.datetime.now()).split(".")[0].replace(":", "-")
+        pagenumber = ""
+        userinput()
+        menu()
+        
+        options = uc.ChromeOptions()
+        options.headless=True
+        options.add_argument('--headless')
+        driver = uc.Chrome(options=options)
+        
+        with open(f"wordlists/{wordlistname}.txt", "r") as wordlistfile:
+            for line in wordlistfile:
+                global username
+                count = count + 1
+                username = line.strip()
+                driver.get(f'https://instagram.com/{username}')
+
+                if 'Sorry, this page isn\'t available.' in driver.page_source:
+                    good = good + 1
+                    print(f"{style.RESET}https://instagram.com/{username}")
+                    print(f"{style.GREEN}[+] {style.RESET} Username available\n")
+                    with open(f"results/Instagram/{currentdate}.txt", "a") as results:
+                        results.write(f"https://instagram.com/{username}\n")
+                else:
+                    bad = bad + 1
+                    print(f"{style.RESET}https://instagram.com/{username}")
+                    print(f"{style.RED}[-] {style.RESET} Username not available\n")
+                time.sleep(interval)   
+        menu()
+        print(f"Checked {str(count)} users.\n\n{style.GREEN}{str(good)}{style.RESET} available.\n{style.RED}{str(bad)}{style.RESET} unavailable.\n\nPress any key to return to the main menu.")
+        exec(getchinput)
+        exec(mainfunc)
+        break
+
+
 def page1():
     while True:
         makedirs()
@@ -781,7 +822,7 @@ def page3():
         pagenumber = "                                                          page 3/3"
         menu()
         try:
-            choice=int(input("Choose an option:\n(1) Steam\n(2) Tumblr\n(3) Epic Games\n(4) LastFM\n(5) Xbox\n(6) Krunker\n(7) Minecraft\n(8) Go to the previous page\nChoice: "))
+            choice=int(input("Choose an option:\n(1) Steam\n(2) Tumblr\n(3) Epic Games\n(4) LastFM\n(5) Xbox\n(6) Krunker\n(7) Minecraft\n(8) Instagram\n(9) Go to the previous page\nChoice: "))
             if choice==1:
                 steam()
                 break
@@ -804,6 +845,9 @@ def page3():
                 minecraft()
                 break
             elif choice==8:
+                instagram()
+                break
+            elif choice==9:
                 page2()
                 break
             else:
